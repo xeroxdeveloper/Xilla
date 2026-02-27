@@ -6,7 +6,7 @@ labels: bug, module
 assignees: ''
 
 ---
-- [x] This bug is related to **module from official [repository](https://mods.hikariatama.ru)**.
+- [x] This bug is related to **module from official [repository](https://mods.xeroxdeveloper.ru)**.
 ---
 **Module, related to problem** [E.g. HikariChat]:
 

@@ -1,12 +1,12 @@
-<a href="https://deepsource.io/gh/hikariatama/Hikka/?ref=repository-badge"><img src="https://deepsource.io/gh/hikariatama/Hikka.svg/?label=active+issues&show_trend=true&token=IPVI_QX-cSuQSVeVl8cb5PLt" alt="DeepSource"></a>
-<a href="https://deepsource.io/gh/hikariatama/Hikka/?ref=repository-badge"><img src="https://deepsource.io/gh/hikariatama/Hikka.svg/?label=resolved+issues&show_trend=true&token=IPVI_QX-cSuQSVeVl8cb5PLt" alt="DeepSource"></a><br>
-<a href="https://www.codacy.com/gh/hikariatama/Hikka/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hikariatama/Hikka&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/97e3ea868f9344a5aa6e4d874f83db14"/></a>
-<a href="#"><img src="https://img.shields.io/github/languages/code-size/hikariatama/Hikka"/></a>
-<a href="#"><img src="https://img.shields.io/github/issues-raw/hikariatama/Hikka"/></a>
-<a href="#"><img src="https://img.shields.io/github/license/hikariatama/Hikka"/></a>
-<a href="#"><img src="https://img.shields.io/github/commit-activity/m/hikariatama/Hikka"/></a><br>
-<a href="#"><img src="https://img.shields.io/github/forks/hikariatama/Hikka?style=flat"/></a>
-<a href="#"><img src="https://img.shields.io/github/stars/hikariatama/Hikka"/></a>&nbsp;<a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black"></a><br>
+<a href="https://deepsource.io/gh/xeroxdeveloper/Xilla/?ref=repository-badge"><img src="https://deepsource.io/gh/xeroxdeveloper/Xilla.svg/?label=active+issues&show_trend=true&token=IPVI_QX-cSuQSVeVl8cb5PLt" alt="DeepSource"></a>
+<a href="https://deepsource.io/gh/xeroxdeveloper/Xilla/?ref=repository-badge"><img src="https://deepsource.io/gh/xeroxdeveloper/Xilla.svg/?label=resolved+issues&show_trend=true&token=IPVI_QX-cSuQSVeVl8cb5PLt" alt="DeepSource"></a><br>
+<a href="https://www.codacy.com/gh/xeroxdeveloper/Xilla/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=xeroxdeveloper/Xilla&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/97e3ea868f9344a5aa6e4d874f83db14"/></a>
+<a href="#"><img src="https://img.shields.io/github/languages/code-size/xeroxdeveloper/Xilla"/></a>
+<a href="#"><img src="https://img.shields.io/github/issues-raw/xeroxdeveloper/Xilla"/></a>
+<a href="#"><img src="https://img.shields.io/github/license/xeroxdeveloper/Xilla"/></a>
+<a href="#"><img src="https://img.shields.io/github/commit-activity/m/xeroxdeveloper/Xilla"/></a><br>
+<a href="#"><img src="https://img.shields.io/github/forks/xeroxdeveloper/Xilla?style=flat"/></a>
+<a href="#"><img src="https://img.shields.io/github/stars/xeroxdeveloper/Xilla"/></a>&nbsp;<a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black"></a><br>
 
 <hr>
 
@@ -17,21 +17,21 @@ The development will start from scratch with a new project, which will be announ
 As of March 2025, you can apply for an early stage of alpha-testing through the official channels.  
 
 <hr>
-<h2><img src="https://github.com/hikariatama/assets/raw/master/1326-command-window-line-flat.webp" height="54" align="middle"> Installation</h2>
+<h2><img src="https://github.com/xeroxdeveloper/assets/raw/master/1326-command-window-line-flat.webp" height="54" align="middle"> Installation</h2>
 
 ### Installation page
 
-<img src="https://github.com/hikariatama/assets/raw/master/install_qr.gif" height="256">
+<img src="https://github.com/xeroxdeveloper/assets/raw/master/install_qr.gif" height="256">
 
 <a href="https://t.me/lavhostbot?start=SGlra2E"><img src="https://user-images.githubusercontent.com/36935426/167272288-85f00779-4b98-47da-8d0d-ea2c6370b979.png" height="40"></a>
 
 <h2>Local installation:</h2>
 Simply run this command out of <b>root</b> and follow the instructions of installer:<br>
-<code>. <(wget -qO- https://hikariatama.ru/get_hikka)</code><br>
+<code>. <(wget -qO- https://xeroxdeveloper.ru/get_xilla)</code><br>
 <br>
 <b>Manual installation (no script):</b><br>
-<code>apt update && apt install git libcairo2 -y && git clone https://github.com/hikariatama/Hikka && cd Hikka && pip install -r requirements.txt && python3 -m hikka</code><br.>
-<i>If you are on VPS\VDS, type <code>--proxy-pass</code> in the end of command to open SSH tunnel to your Hikka web interface, or use <code>--no-web</code> to complete setup in console</i><br>
+<code>apt update && apt install git libcairo2 -y && git clone https://github.com/xeroxdeveloper/Xilla && cd Xilla && pip install -r requirements.txt && python3 -m xilla</code><br.>
+<i>If you are on VPS\VDS, type <code>--proxy-pass</code> in the end of command to open SSH tunnel to your Xilla web interface, or use <code>--no-web</code> to complete setup in console</i><br>
 <br>
 <b>Some further details:</b>
 
@@ -46,7 +46,7 @@ Simply run this command out of <b>root</b> and follow the instructions of instal
 </details>
 
 <hr>
-<h2><img src="https://github.com/hikariatama/assets/raw/master/35-edit-flat.webp" height="54" align="middle"> Changes</h2>
+<h2><img src="https://github.com/xeroxdeveloper/assets/raw/master/35-edit-flat.webp" height="54" align="middle"> Changes</h2>
 
 <ul>
  <li>🆕 <b>Latest Telegram layer</b> with reactions, video stickers and other stuff</li>
@@ -58,27 +58,27 @@ Simply run this command out of <b>root</b> and follow the instructions of instal
  <li>🔁 Full <b>backward compatibility</b> with FTG, GeekTG and Dragon Userbot modules</li>
 </ul>
 <hr>
-<h2 border="none"><img src="https://github.com/hikariatama/assets/raw/master/1312-micro-sd-card-flat.webp" height="54" align="middle"> Requirements</h2>
+<h2 border="none"><img src="https://github.com/xeroxdeveloper/assets/raw/master/1312-micro-sd-card-flat.webp" height="54" align="middle"> Requirements</h2>
 <ul>
  <li>Python 3.8+</li>
  <li>API_ID and HASH from <a href="https://my.telegram.org/apps" color="#2594cb">Telegram</a></li>
 </ul>
 <hr>
-<h2 border="none"><img src="https://github.com/hikariatama/assets/raw/master/680-it-developer-flat.webp" height="54" align="middle"> Documentation</h2>
+<h2 border="none"><img src="https://github.com/xeroxdeveloper/assets/raw/master/680-it-developer-flat.webp" height="54" align="middle"> Documentation</h2>
 
-Check out <a href="https://dev.hikka.pw">dev.hikka.pw</a> for developers' documentation and <a href="https://hikka.pw">hikka.pw</a> for users' documentation<br>
+Check out <a href="https://dev.xilla.pw">dev.xilla.pw</a> for developers' documentation and <a href="https://xilla.pw">xilla.pw</a> for users' documentation<br>
 
 <hr>
-<h2 border="none"><img src="https://github.com/hikariatama/assets/raw/master/981-consultation-flat.webp" height="54" align="middle"> <a href="https://t.me/hikka_talks">Support</a></h2>
+<h2 border="none"><img src="https://github.com/xeroxdeveloper/assets/raw/master/981-consultation-flat.webp" height="54" align="middle"> <a href="https://t.me/xilla_talks">Support</a></h2>
 <hr>
-<h2 border="none"><img src="https://github.com/hikariatama/assets/raw/master/541-hand-washing-step-12-flat.webp" height="54" align="middle"> Features</h2>
+<h2 border="none"><img src="https://github.com/xeroxdeveloper/assets/raw/master/541-hand-washing-step-12-flat.webp" height="54" align="middle"> Features</h2>
 <table>
  <tr>
   <td>
-   <img src="https://github.com/hikariatama/assets/raw/master/1286-three-3-key-flat.webp" height="32" align="middle"><b> Forms - bored of writing? Use buttons!</b>
+   <img src="https://github.com/xeroxdeveloper/assets/raw/master/1286-three-3-key-flat.webp" height="32" align="middle"><b> Forms - bored of writing? Use buttons!</b>
   </td>
   <td>
-   <img src="https://github.com/hikariatama/assets/raw/master/61-camera-flat.webp" height="32" align="middle"><b> Galleries - scroll your favorite photos in Telegram</b>
+   <img src="https://github.com/xeroxdeveloper/assets/raw/master/61-camera-flat.webp" height="32" align="middle"><b> Galleries - scroll your favorite photos in Telegram</b>
   </td>
  </tr>
  <tr>
@@ -93,10 +93,10 @@ Check out <a href="https://dev.hikka.pw">dev.hikka.pw</a> for developers' docume
 <table>
  <tr>
   <td>
-   <img src="https://github.com/hikariatama/assets/raw/master/216-arrow-5-flat.webp" height="32" align="middle"><b> Inline - share userbot with your friends</b>
+   <img src="https://github.com/xeroxdeveloper/assets/raw/master/216-arrow-5-flat.webp" height="32" align="middle"><b> Inline - share userbot with your friends</b>
   </td>
   <td>
-   <img src="https://github.com/hikariatama/assets/raw/master/1054-amazon-echo-speaker-flat.webp" height="32" align="middle"><b> Bot interactions - "No PM"? No problem. Feedback bot at your service</b>
+   <img src="https://github.com/xeroxdeveloper/assets/raw/master/1054-amazon-echo-speaker-flat.webp" height="32" align="middle"><b> Bot interactions - "No PM"? No problem. Feedback bot at your service</b>
   </td>
  </tr>
  <tr>
@@ -111,10 +111,10 @@ Check out <a href="https://dev.hikka.pw">dev.hikka.pw</a> for developers' docume
 <table>
  <tr>
   <td>
-   <img src="https://github.com/hikariatama/assets/raw/master/1140-error-flat.webp" height="32" align="middle"><b> InlineLogs - traceback directly in message, caused error</b>
+   <img src="https://github.com/xeroxdeveloper/assets/raw/master/1140-error-flat.webp" height="32" align="middle"><b> InlineLogs - traceback directly in message, caused error</b>
   </td>
   <td>
-   <img src="https://github.com/hikariatama/assets/raw/master/35-edit-flat.webp" height="32" align="middle"><b> Grep - execute command and get only required lines</b>
+   <img src="https://github.com/xeroxdeveloper/assets/raw/master/35-edit-flat.webp" height="32" align="middle"><b> Grep - execute command and get only required lines</b>
   </td>
  </tr>
  <tr>
@@ -131,7 +131,7 @@ Check out <a href="https://dev.hikka.pw">dev.hikka.pw</a> for developers' docume
 <img src="https://user-images.githubusercontent.com/36935426/202842278-37fbc518-1679-45d7-92f5-9e519275630d.png">
 
 <hr>
-<i>⚠️ This project is provided as-is. Developer doesn't take ANY responsibility over any problems, caused by userbot. By installing Hikka you take all risks on you. This is but not limited to account bans, deleted (by Telegram algorithms) messages, SCAM-modules, leaked sessions (due to SCAM-modules). It is <b>highly</b> recommended to enable the API Flood protection (.api_fw_protection) and not to install many modules at once. By using Hikka you give your consent to any actions made by your account in background in purposes of automatization. Please, consider reading https://core.telegram.org/api/terms for more information.</i>
+<i>⚠️ This project is provided as-is. Developer doesn't take ANY responsibility over any problems, caused by userbot. By installing Xilla you take all risks on you. This is but not limited to account bans, deleted (by Telegram algorithms) messages, SCAM-modules, leaked sessions (due to SCAM-modules). It is <b>highly</b> recommended to enable the API Flood protection (.api_fw_protection) and not to install many modules at once. By using Xilla you give your consent to any actions made by your account in background in purposes of automatization. Please, consider reading https://core.telegram.org/api/terms for more information.</i>
 
 <b>Special thanks to:</b>
 
@@ -141,6 +141,6 @@ Check out <a href="https://dev.hikka.pw">dev.hikka.pw</a> for developers' docume
     <li><a href="https://t.me/hegaNET">Hegakura</a> for Tatar translation pack</li>
     <li><a href="https://t.me/tiefeschwarz">Aldehydesäure</a> for German translation pack</li>
     <li><a href="https://t.me/amorescam">Amore</a> for Uzbek translation pack</li>
-    <li><a href="https://t.me/lonami">Lonami</a> for Telethon, which is the base of Hikka-TL</li>
-    <li><a href="https://github.com/delivrance">Dan</a> for pyrogram, which is the base of Hikka-Pyro</li>
+    <li><a href="https://t.me/lonami">Lonami</a> for Telethon, which is the base of Xilla-TL</li>
+    <li><a href="https://github.com/delivrance">Dan</a> for pyrogram, which is the base of Xilla-Pyro</li>
 </ul>
