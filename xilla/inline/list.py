@@ -8,9 +8,9 @@ import traceback
 import typing
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineQuery, InlineQueryResultArticle, InputTextMessageContent
 from aiogram.utils.exceptions import RetryAfter
-from xillatl.errors.rpcerrorlist import ChatSendInlineForbiddenError
-from xillatl.extensions.html import CUSTOM_EMOJIS
-from xillatl.tl.types import Message
+from hikkatl.errors.rpcerrorlist import ChatSendInlineForbiddenError
+from hikkatl.extensions.html import CUSTOM_EMOJIS
+from hikkatl.tl.types import Message
 from .. import main, utils
 from ..types import XillaReplyMarkup
 from .types import InlineMessage, InlineUnit

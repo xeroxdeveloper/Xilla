@@ -15,14 +15,14 @@ import sqlite3
 import typing
 from getpass import getpass
 from pathlib import Path
-import xillatl
-from xillatl import events
-from xillatl.errors import ApiIdInvalidError, AuthKeyDuplicatedError, FloodWaitError, PasswordHashInvalidError, PhoneNumberInvalidError, SessionPasswordNeededError
-from xillatl.network.connection import ConnectionTcpFull, ConnectionTcpMTProxyRandomizedIntermediate
-from xillatl.password import compute_check
-from xillatl.sessions import MemorySession, SQLiteSession
-from xillatl.tl.functions.account import GetPasswordRequest
-from xillatl.tl.functions.auth import CheckPasswordRequest
+import hikkatl
+from hikkatl import events
+from hikkatl.errors import ApiIdInvalidError, AuthKeyDuplicatedError, FloodWaitError, PasswordHashInvalidError, PhoneNumberInvalidError, SessionPasswordNeededError
+from hikkatl.network.connection import ConnectionTcpFull, ConnectionTcpMTProxyRandomizedIntermediate
+from hikkatl.password import compute_check
+from hikkatl.sessions import MemorySession, SQLiteSession
+from hikkatl.tl.functions.account import GetPasswordRequest
+from hikkatl.tl.functions.auth import CheckPasswordRequest
 from . import database, loader, utils, version
 from ._internal import print_banner
 from .dispatcher import CommandDispatcher
@@ -416,5 +416,5 @@ class Xilla:
     def main(self):
         self.loop.run_until_complete(self._main())
         self.loop.close()
-xillatl.extensions.html.CUSTOM_EMOJIS = not get_config_key('disable_custom_emojis')
+hikkatl.extensions.html.CUSTOM_EMOJIS = not get_config_key('disable_custom_emojis')
 xilla = Xilla()

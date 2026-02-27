@@ -8,7 +8,7 @@ import sys
 import traceback
 import typing
 from logging.handlers import RotatingFileHandler
-import xillatl
+import hikkatl
 from aiogram.utils.exceptions import NetworkError
 from . import utils
 from .tl_cache import CustomTelegramClient
@@ -52,7 +52,7 @@ class XillaException:
                     try:
                         if getattr(getattr(value, '__class__', None), '__name__', None) == 'Database':
                             dictionary[key] = '<Database>'
-                        elif isinstance(value, (xillatl.TelegramClient, CustomTelegramClient)):
+                        elif isinstance(value, (hikkatl.TelegramClient, CustomTelegramClient)):
                             dictionary[key] = f'<{value.__class__.__name__}>'
                         elif len(str(value)) > 512:
                             dictionary[key] = f'{str(value)[:512]}...'
@@ -114,7 +114,7 @@ class TelegramLogsHandler(logging.Handler):
 
     async def _show_full_trace(self, call: BotInlineCall, bot: 'aiogram.Bot', item: XillaException):
         chunks = item.message + '\n\n<b>🪐 Full traceback:</b>\n' + item.full_stack
-        chunks = list(utils.smart_split(*xillatl.extensions.html.parse(chunks), 4096))
+        chunks = list(utils.smart_split(*hikkatl.extensions.html.parse(chunks), 4096))
         await call.edit(chunks[0], reply_markup=self._gen_web_debug_button(item))
         for chunk in chunks[1:]:
             await bot.send_message(chat_id=call.chat_id, text=chunk)
@@ -208,8 +208,8 @@ def init():
     logging.getLogger().handlers = []
     logging.getLogger().addHandler(TelegramLogsHandler((handler, rotating_handler), 7000))
     logging.getLogger().setLevel(logging.NOTSET)
-    logging.getLogger('xillatl').setLevel(logging.WARNING)
-    logging.getLogger('xillapyro').setLevel(logging.WARNING)
+    logging.getLogger('hikkatl').setLevel(logging.WARNING)
+    logging.getLogger('hikkapyro').setLevel(logging.WARNING)
     logging.getLogger('matplotlib').setLevel(logging.WARNING)
     logging.getLogger('aiohttp').setLevel(logging.WARNING)
     logging.getLogger('aiogram').setLevel(logging.WARNING)

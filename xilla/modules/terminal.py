@@ -4,7 +4,7 @@ import logging
 import os
 import re
 import typing
-import xillatl
+import hikkatl
 from .. import loader, utils
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ async def sleep_for_task(func: callable, data: bytes, delay: float):
 
 class MessageEditor:
 
-    def __init__(self, message: xillatl.tl.types.Message, command: str, config, strings, request_message):
+    def __init__(self, message: hikkatl.tl.types.Message, command: str, config, strings, request_message):
         self.message = message
         self.command = command
         self.stdout = ''
@@ -60,10 +60,10 @@ class MessageEditor:
         stderr = utils.escape_html(self.stderr[max(len(self.stderr) - 1024, 0):])
         text += self.strings('stderr') + stderr if stderr else ''
         text += self.strings('end')
-        with contextlib.suppress(xillatl.errors.rpcerrorlist.MessageNotModifiedError):
+        with contextlib.suppress(hikkatl.errors.rpcerrorlist.MessageNotModifiedError):
             try:
                 self.message = await utils.answer(self.message, text)
-            except xillatl.errors.rpcerrorlist.MessageTooLongError as e:
+            except hikkatl.errors.rpcerrorlist.MessageTooLongError as e:
                 logger.error(e)
                 logger.error(text)
 
@@ -109,7 +109,7 @@ class SudoMessageEditor(MessageEditor):
             text = self.strings('auth_needed').format(self._tg_id)
             try:
                 await utils.answer(self.message, text)
-            except xillatl.errors.rpcerrorlist.MessageNotModifiedError as e:
+            except hikkatl.errors.rpcerrorlist.MessageNotModifiedError as e:
                 logger.debug(e)
             logger.debug('edited message with link to self')
             command = '<code>' + utils.escape_html(self.command) + '</code>'
@@ -117,7 +117,7 @@ class SudoMessageEditor(MessageEditor):
             self.authmsg = await self.message[0].client.send_message('me', self.strings('auth_msg').format(command, user))
             logger.debug('sent message to self')
             self.message[0].client.remove_event_handler(self.on_message_edited)
-            self.message[0].client.add_event_handler(self.on_message_edited, xillatl.events.messageedited.MessageEdited(chats=['me']))
+            self.message[0].client.add_event_handler(self.on_message_edited, hikkatl.events.messageedited.MessageEdited(chats=['me']))
             logger.debug('registered handler')
             handled = True
         if len(lines) > 1 and (re.fullmatch(self.TOO_MANY_TRIES, lastline) and self.state in {1, 3, 4}):
@@ -151,7 +151,7 @@ class SudoMessageEditor(MessageEditor):
         if hash_msg(message) == hash_msg(self.authmsg):
             try:
                 self.authmsg = await utils.answer(message, self.strings('auth_ongoing'))
-            except xillatl.errors.rpcerrorlist.MessageNotModifiedError:
+            except hikkatl.errors.rpcerrorlist.MessageNotModifiedError:
                 await message.delete()
             self.state = 1
             self.process.stdin.write(message.message.message.split('\n', 1)[0].encode() + b'\n')
@@ -173,10 +173,10 @@ class RawMessageEditor(SudoMessageEditor):
         if self.rc is not None and self.show_done:
             text += '\n' + self.strings('done')
         logger.debug(text)
-        with contextlib.suppress(xillatl.errors.rpcerrorlist.MessageNotModifiedError, xillatl.errors.rpcerrorlist.MessageEmptyError, ValueError):
+        with contextlib.suppress(hikkatl.errors.rpcerrorlist.MessageNotModifiedError, hikkatl.errors.rpcerrorlist.MessageEmptyError, ValueError):
             try:
                 await utils.answer(self.message, text)
-            except xillatl.errors.rpcerrorlist.MessageTooLongError as e:
+            except hikkatl.errors.rpcerrorlist.MessageTooLongError as e:
                 logger.error(e)
                 logger.error(text)
 
@@ -197,7 +197,7 @@ class TerminalMod(loader.Module):
     async def aptcmd(self, message):
         await self.run_command(message, ('apt ' if os.geteuid() == 0 else 'sudo -S apt ') + utils.get_args_raw(message) + ' -y', RawMessageEditor(message, f'apt {utils.get_args_raw(message)}', self.config, self.strings, message, True))
 
-    async def run_command(self, message: xillatl.tl.types.Message, cmd: str, editor: typing.Optional[MessageEditor]=None):
+    async def run_command(self, message: hikkatl.tl.types.Message, cmd: str, editor: typing.Optional[MessageEditor]=None):
         if len(cmd.split(' ')) > 1 and cmd.split(' ')[0] == 'sudo':
             needsswitch = True
             for word in cmd.split(' ', 1)[1].split(' '):

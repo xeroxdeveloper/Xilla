@@ -2,9 +2,9 @@ import contextlib
 import datetime
 import time
 import typing
-from xillatl.hints import EntityLike
-from xillatl.tl.types import Message, PeerUser, User
-from xillatl.utils import get_display_name
+from hikkatl.hints import EntityLike
+from hikkatl.tl.types import Message, PeerUser, User
+from hikkatl.utils import get_display_name
 from .. import loader, main, security, utils
 from ..inline.types import InlineCall, InlineMessage
 from ..security import DEFAULT_PERMISSIONS, EVERYONE, GROUP_ADMIN, GROUP_ADMIN_ADD_ADMINS, GROUP_ADMIN_BAN_USERS, GROUP_ADMIN_CHANGE_INFO, GROUP_ADMIN_DELETE_MESSAGES, GROUP_ADMIN_INVITE_USERS, GROUP_ADMIN_PIN_MESSAGES, GROUP_MEMBER, GROUP_OWNER, PM, SecurityGroup

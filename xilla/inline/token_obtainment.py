@@ -1,8 +1,8 @@
 import asyncio
 import logging
 import re
-from xillatl.errors.rpcerrorlist import YouBlockedUserError
-from xillatl.tl.functions.contacts import UnblockRequest
+from hikkatl.errors.rpcerrorlist import YouBlockedUserError
+from hikkatl.tl.functions.contacts import UnblockRequest
 from .. import utils
 from .._internal import fw_protect
 from .types import InlineUnit

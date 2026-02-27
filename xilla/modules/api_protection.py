@@ -8,10 +8,10 @@ import logging
 import random
 import time
 import typing
-from xillatl.tl import functions
-from xillatl.tl.tlobject import TLRequest
-from xillatl.tl.types import Message
-from xillatl.utils import is_list_like
+from hikkatl.tl import functions
+from hikkatl.tl.tlobject import TLRequest
+from hikkatl.tl.types import Message
+from hikkatl.utils import is_list_like
 from .. import loader, utils
 from ..inline.types import InlineCall
 from ..web.debugger import WebDebugger

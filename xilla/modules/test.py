@@ -5,7 +5,7 @@ import random
 import time
 import typing
 from io import BytesIO
-from xillatl.tl.types import Message
+from hikkatl.tl.types import Message
 from .. import loader, main, utils
 from ..inline.types import InlineCall
 logger = logging.getLogger(__name__)

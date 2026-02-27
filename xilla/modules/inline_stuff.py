@@ -1,8 +1,8 @@
 import re
 import string
-from xillatl.errors.rpcerrorlist import YouBlockedUserError
-from xillatl.tl.functions.contacts import UnblockRequest
-from xillatl.tl.types import Message
+from hikkatl.errors.rpcerrorlist import YouBlockedUserError
+from hikkatl.tl.functions.contacts import UnblockRequest
+from hikkatl.tl.types import Message
 from .. import loader, utils
 from ..inline.types import BotInlineMessage
 

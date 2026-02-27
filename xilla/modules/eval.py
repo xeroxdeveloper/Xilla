@@ -6,10 +6,10 @@ import sys
 import tempfile
 import typing
 from types import ModuleType
-import xillatl
-from xillatl.errors.rpcerrorlist import MessageIdInvalidError
-from xillatl.sessions import StringSession
-from xillatl.tl.types import Message
+import hikkatl
+from hikkatl.errors.rpcerrorlist import MessageIdInvalidError
+from hikkatl.sessions import StringSession
+from hikkatl.tl.types import Message
 from meval import meval
 from .. import loader, main, utils
 from ..log import XillaException
@@ -255,8 +255,8 @@ class Evaluator(loader.Module):
 
     async def getattrs(self, message: Message) -> dict:
         reply = await message.get_reply_message()
-        return {'message': message, 'client': self._client, 'reply': reply, 'r': reply, **self.get_sub(xillatl.tl.types), **self.get_sub(xillatl.tl.functions), 'event': message, 'chat': message.to_id, 'xillatl': xillatl, 'telethon': xillatl, 'utils': utils, 'main': main, 'loader': loader, 'f': xillatl.tl.functions, 'c': self._client, 'm': message, 'lookup': self.lookup, 'self': self, 'db': self.db}
+        return {'message': message, 'client': self._client, 'reply': reply, 'r': reply, **self.get_sub(hikkatl.tl.types), **self.get_sub(hikkatl.tl.functions), 'event': message, 'chat': message.to_id, 'hikkatl': hikkatl, 'telethon': hikkatl, 'utils': utils, 'main': main, 'loader': loader, 'f': hikkatl.tl.functions, 'c': self._client, 'm': message, 'lookup': self.lookup, 'self': self, 'db': self.db}
 
     def get_sub(self, obj: typing.Any, _depth: int=1) -> dict:
         """Get all callable capitalised objects in an object recursively, ignoring _*"""
-        return {**dict(filter(lambda x: x[0][0] != '_' and x[0][0].upper() == x[0][0] and callable(x[1]), obj.__dict__.items())), **dict(itertools.chain.from_iterable([self.get_sub(y[1], _depth + 1).items() for y in filter(lambda x: x[0][0] != '_' and isinstance(x[1], ModuleType) and (x[1] != obj) and (x[1].__package__.rsplit('.', _depth)[0] == 'xillatl.tl'), obj.__dict__.items())]))}
+        return {**dict(filter(lambda x: x[0][0] != '_' and x[0][0].upper() == x[0][0] and callable(x[1]), obj.__dict__.items())), **dict(itertools.chain.from_iterable([self.get_sub(y[1], _depth + 1).items() for y in filter(lambda x: x[0][0] != '_' and isinstance(x[1], ModuleType) and (x[1] != obj) and (x[1].__package__.rsplit('.', _depth)[0] == 'hikkatl.tl'), obj.__dict__.items())]))}

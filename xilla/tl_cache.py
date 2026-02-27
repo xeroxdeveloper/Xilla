@@ -3,15 +3,15 @@ import inspect
 import logging
 import time
 import typing
-from xillatl import TelegramClient
-from xillatl.errors.rpcerrorlist import TopicDeletedError
-from xillatl.hints import EntityLike
-from xillatl.network import MTProtoSender
-from xillatl.tl.functions.channels import GetFullChannelRequest
-from xillatl.tl.functions.users import GetFullUserRequest
-from xillatl.tl.tlobject import TLRequest
-from xillatl.tl.types import ChannelFull, Message, Updates, UpdatesCombined, UpdateShort, UserFull
-from xillatl.utils import is_list_like
+from hikkatl import TelegramClient
+from hikkatl.errors.rpcerrorlist import TopicDeletedError
+from hikkatl.hints import EntityLike
+from hikkatl.network import MTProtoSender
+from hikkatl.tl.functions.channels import GetFullChannelRequest
+from hikkatl.tl.functions.users import GetFullUserRequest
+from hikkatl.tl.tlobject import TLRequest
+from hikkatl.tl.types import ChannelFull, Message, Updates, UpdatesCombined, UpdateShort, UserFull
+from hikkatl.utils import is_list_like
 from .types import CacheRecordEntity, CacheRecordFullChannel, CacheRecordFullUser, CacheRecordPerms, Module
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ class CustomTelegramClient(TelegramClient):
 
     async def __call__(self, request, ordered=False, flood_sleep_threshold=None):
         import asyncio
-        from xillatl.errors import FloodWaitError
+        from hikkatl.errors import FloodWaitError
         try:
             return await super().__call__(request, ordered, flood_sleep_threshold)
         except FloodWaitError as e:

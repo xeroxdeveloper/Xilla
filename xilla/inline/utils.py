@@ -11,7 +11,7 @@ from copy import deepcopy
 from urllib.parse import urlparse
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, InputFile, InputMediaAnimation, InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo
 from aiogram.utils.exceptions import BadRequest, MessageIdInvalid, MessageNotModified, RetryAfter
-from xillatl.utils import resolve_inline_message_id
+from hikkatl.utils import resolve_inline_message_id
 from .. import utils
 from ..types import XillaReplyMarkup
 from .types import InlineCall, InlineUnit

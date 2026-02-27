@@ -13,8 +13,8 @@ except ImportError as e:
     if 'RAILWAY' in os.environ:
         raise e
 import typing
-from xillatl.errors.rpcerrorlist import ChannelsTooMuchError
-from xillatl.tl.types import Message, User
+from hikkatl.errors.rpcerrorlist import ChannelsTooMuchError
+from hikkatl.tl.types import Message, User
 from . import main, utils
 from .pointers import BaseSerializingMiddlewareDict, BaseSerializingMiddlewareList, NamedTupleMiddlewareDict, NamedTupleMiddlewareList, PointerDict, PointerList
 from .tl_cache import CustomTelegramClient

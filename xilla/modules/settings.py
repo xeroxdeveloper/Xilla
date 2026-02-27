@@ -1,7 +1,7 @@
-import xillapyro
-import xillatl
-from xillatl.extensions.html import CUSTOM_EMOJIS
-from xillatl.tl.types import Message
+import hikkapyro
+import hikkatl
+from hikkatl.extensions.html import CUSTOM_EMOJIS
+from hikkatl.tl.types import Message
 from .. import loader, main, utils, version
 from ..compat.dragon import DRAGON_EMOJI
 from ..inline.types import InlineCall
@@ -32,7 +32,7 @@ class CoreMod(loader.Module):
 
     @loader.command()
     async def xillacmd(self, message: Message):
-        await utils.answer_file(message, 'https://github.com/xeroxdeveloper/assets/raw/master/xilla_cat_banner.mp4', self.strings('xilla').format(utils.get_platform_emoji() if self._client.xilla_me.premium and CUSTOM_EMOJIS else '🌘 <b>Xilla userbot</b>', *version.__version__, utils.get_commit_url(), f'{xillatl.__version__} #{xillatl.tl.alltlobjects.LAYER}', '<emoji document_id=5377399247589088543>🔥</emoji>' if self._client.pyro_proxy else '<emoji document_id=5418308381586759720>📴</emoji>', f'{xillapyro.__version__} #{xillapyro.raw.all.layer}') + ('' if version.branch == 'master' else self.strings('unstable').format(version.branch)))
+        await utils.answer_file(message, 'https://github.com/xeroxdeveloper/assets/raw/master/xilla_cat_banner.mp4', self.strings('xilla').format(utils.get_platform_emoji() if self._client.xilla_me.premium and CUSTOM_EMOJIS else '🌘 <b>Xilla userbot</b>', *version.__version__, utils.get_commit_url(), f'{hikkatl.__version__} #{hikkatl.tl.alltlobjects.LAYER}', '<emoji document_id=5377399247589088543>🔥</emoji>' if self._client.pyro_proxy else '<emoji document_id=5418308381586759720>📴</emoji>', f'{hikkapyro.__version__} #{hikkapyro.raw.all.layer}') + ('' if version.branch == 'master' else self.strings('unstable').format(version.branch)))
 
     @loader.command()
     async def blacklist(self, message: Message):

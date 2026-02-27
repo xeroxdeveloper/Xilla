@@ -1,6 +1,6 @@
 import git
-from xillatl.tl.types import Message
-from xillatl.utils import get_display_name
+from hikkatl.tl.types import Message
+from hikkatl.utils import get_display_name
 from .. import loader, utils, version
 from ..inline.types import InlineQuery
 @loader.tds

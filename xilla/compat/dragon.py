@@ -18,7 +18,7 @@ except Exception:
     PIP_AVAILABLE = False
 else:
     PIP_AVAILABLE = True
-from xillapyro import Client, errors, types
+from hikkapyro import Client, errors, types
 from .. import version
 from .._internal import restart
 from ..database import Database
@@ -259,9 +259,9 @@ def patched_import(name: str, *args, **kwargs):
             return getattr(import_lock.current_client.dragon_compat, name.split('.', maxsplit=1)[1])
         raise ImportError(f'Unknown module {name}')
     if name.startswith('telethon'):
-        return native_import('xillatl' + name[8:], *args, **kwargs)
+        return native_import('hikkatl' + name[8:], *args, **kwargs)
     if name.startswith('pyrogram'):
-        return native_import('xillapyro' + name[8:], *args, **kwargs)
+        return native_import('hikkapyro' + name[8:], *args, **kwargs)
     return native_import(name, *args, **kwargs)
 builtins.__import__ = patched_import
 

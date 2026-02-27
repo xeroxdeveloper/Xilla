@@ -1,8 +1,8 @@
 import difflib
 import inspect
 import logging
-from xillatl.extensions.html import CUSTOM_EMOJIS
-from xillatl.tl.types import Message
+from hikkatl.extensions.html import CUSTOM_EMOJIS
+from hikkatl.tl.types import Message
 from .. import loader, utils
 from ..compat.dragon import DRAGON_EMOJI
 from ..types import DragonModule

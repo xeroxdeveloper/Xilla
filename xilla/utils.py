@@ -21,22 +21,22 @@ from datetime import timedelta
 from urllib.parse import urlparse
 import git
 import grapheme
-import xillatl
+import hikkatl
 import requests
 from aiogram.types import Message as AiogramMessage
-from xillatl import hints
-from xillatl.tl.custom.message import Message
-from xillatl.tl.functions.account import UpdateNotifySettingsRequest
-from xillatl.tl.functions.channels import CreateChannelRequest, EditAdminRequest, EditPhotoRequest, InviteToChannelRequest
-from xillatl.tl.functions.messages import GetDialogFiltersRequest, SetHistoryTTLRequest, UpdateDialogFilterRequest
-from xillatl.tl.types import Channel, Chat, ChatAdminRights, InputDocument, InputPeerNotifySettings, MessageEntityBankCard, MessageEntityBlockquote, MessageEntityBold, MessageEntityBotCommand, MessageEntityCashtag, MessageEntityCode, MessageEntityEmail, MessageEntityHashtag, MessageEntityItalic, MessageEntityMention, MessageEntityMentionName, MessageEntityPhone, MessageEntityPre, MessageEntitySpoiler, MessageEntityStrike, MessageEntityTextUrl, MessageEntityUnderline, MessageEntityUnknown, MessageEntityUrl, MessageMediaWebPage, PeerChannel, PeerChat, PeerUser, UpdateNewChannelMessage, User
+from hikkatl import hints
+from hikkatl.tl.custom.message import Message
+from hikkatl.tl.functions.account import UpdateNotifySettingsRequest
+from hikkatl.tl.functions.channels import CreateChannelRequest, EditAdminRequest, EditPhotoRequest, InviteToChannelRequest
+from hikkatl.tl.functions.messages import GetDialogFiltersRequest, SetHistoryTTLRequest, UpdateDialogFilterRequest
+from hikkatl.tl.types import Channel, Chat, ChatAdminRights, InputDocument, InputPeerNotifySettings, MessageEntityBankCard, MessageEntityBlockquote, MessageEntityBold, MessageEntityBotCommand, MessageEntityCashtag, MessageEntityCode, MessageEntityEmail, MessageEntityHashtag, MessageEntityItalic, MessageEntityMention, MessageEntityMentionName, MessageEntityPhone, MessageEntityPre, MessageEntitySpoiler, MessageEntityStrike, MessageEntityTextUrl, MessageEntityUnderline, MessageEntityUnknown, MessageEntityUrl, MessageMediaWebPage, PeerChannel, PeerChat, PeerUser, UpdateNewChannelMessage, User
 from ._internal import fw_protect
 from .inline.types import InlineCall, InlineMessage
 from .tl_cache import CustomTelegramClient
 from .types import XillaReplyMarkup, ListLike, Module
 FormattingEntity = typing.Union[MessageEntityUnknown, MessageEntityMention, MessageEntityHashtag, MessageEntityBotCommand, MessageEntityUrl, MessageEntityEmail, MessageEntityBold, MessageEntityItalic, MessageEntityCode, MessageEntityPre, MessageEntityTextUrl, MessageEntityMentionName, MessageEntityPhone, MessageEntityCashtag, MessageEntityUnderline, MessageEntityStrike, MessageEntityBlockquote, MessageEntityBankCard, MessageEntitySpoiler]
 emoji_pattern = re.compile('[😀-🙏🌀-🗿🚀-\U0001f6ff\U0001f1e0-🇿]+', flags=re.UNICODE)
-parser = xillatl.utils.sanitize_parse_mode('html')
+parser = hikkatl.utils.sanitize_parse_mode('html')
 logger = logging.getLogger(__name__)
 
 def get_args(message: typing.Union[Message, str]) -> typing.List[str]:
@@ -75,10 +75,10 @@ def get_args_split_by(message: typing.Union[Message, str], separator: str) -> ty
     return [section.strip() for section in get_args_raw(message).split(separator) if section]
 
 def get_chat_id(message: typing.Union[Message, AiogramMessage]) -> int:
-    return xillatl.utils.resolve_id(getattr(message, 'chat_id', None) or getattr(getattr(message, 'chat', None), 'id', None))[0]
+    return hikkatl.utils.resolve_id(getattr(message, 'chat_id', None) or getattr(getattr(message, 'chat', None), 'id', None))[0]
 
 def get_entity_id(entity: hints.Entity) -> int:
-    return xillatl.utils.get_peer_id(entity)
+    return hikkatl.utils.get_peer_id(entity)
 
 def escape_html(text: str, /) -> str:
     return str(text).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
@@ -178,7 +178,7 @@ async def answer(message: typing.Union[Message, InlineCall, InlineMessage], resp
         kwargs.setdefault('reply_to', getattr(message, 'reply_to_msg_id', None))
     elif 'reply_to' in kwargs:
         kwargs.pop('reply_to')
-    parse_mode = xillatl.utils.sanitize_parse_mode(kwargs.pop('parse_mode', message.client.parse_mode))
+    parse_mode = hikkatl.utils.sanitize_parse_mode(kwargs.pop('parse_mode', message.client.parse_mode))
     if isinstance(response, str) and (not kwargs.pop('asfile', False)):
         text, entities = parse_mode.parse(response)
         if len(text) >= 4096 and (not hasattr(message, 'xilla_grepped')):
@@ -504,8 +504,8 @@ def find_caller(stack: typing.Optional[typing.List[inspect.FrameInfo]]=None) -> 
     return next((getattr(cls_, caller.function, None) for cls_ in caller.frame.f_globals.values() if inspect.isclass(cls_) and issubclass(cls_, Module)), None)
 
 def validate_html(html: str) -> str:
-    text, entities = xillatl.extensions.html.parse(html)
-    return xillatl.extensions.html.unparse(escape_html(text), entities)
+    text, entities = hikkatl.extensions.html.parse(html)
+    return hikkatl.extensions.html.unparse(escape_html(text), entities)
 
 def iter_attrs(obj: typing.Any, /) -> typing.List[typing.Tuple[str, typing.Any]]:
     return ((attr, getattr(obj, attr)) for attr in dir(obj))

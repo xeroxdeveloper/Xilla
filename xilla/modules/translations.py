@@ -1,5 +1,5 @@
 import logging
-from xillatl.tl.types import Message
+from hikkatl.tl.types import Message
 from .. import loader, translations, utils
 from ..inline.types import InlineCall
 logger = logging.getLogger(__name__)

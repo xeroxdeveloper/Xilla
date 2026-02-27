@@ -1,10 +1,10 @@
 import logging
 import time
 import typing
-from xillatl.hints import EntityLike
-from xillatl.tl.functions.messages import GetFullChatRequest
-from xillatl.tl.types import ChatParticipantAdmin, ChatParticipantCreator, Message
-from xillatl.utils import get_display_name
+from hikkatl.hints import EntityLike
+from hikkatl.tl.functions.messages import GetFullChatRequest
+from hikkatl.tl.types import ChatParticipantAdmin, ChatParticipantCreator, Message
+from hikkatl.utils import get_display_name
 from . import main, utils
 from .database import Database
 from .tl_cache import CustomTelegramClient

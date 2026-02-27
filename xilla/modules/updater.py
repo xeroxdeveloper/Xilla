@@ -8,9 +8,9 @@ import time
 import typing
 import git
 from git import GitCommandError, Repo
-from xillatl.extensions.html import CUSTOM_EMOJIS
-from xillatl.tl.functions.messages import GetDialogFiltersRequest, UpdateDialogFilterRequest
-from xillatl.tl.types import DialogFilter, Message
+from hikkatl.extensions.html import CUSTOM_EMOJIS
+from hikkatl.tl.functions.messages import GetDialogFiltersRequest, UpdateDialogFilterRequest
+from hikkatl.tl.types import DialogFilter, Message
 from .. import loader, main, utils, version
 from .._internal import restart
 from ..inline.types import InlineCall

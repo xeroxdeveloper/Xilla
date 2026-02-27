@@ -8,9 +8,9 @@ import re
 import sys
 import traceback
 import typing
-from xillatl import events
-from xillatl.errors import FloodWaitError, RPCError
-from xillatl.tl.types import Message
+from hikkatl import events
+from hikkatl.errors import FloodWaitError, RPCError
+from hikkatl.tl.types import Message
 from . import main, security, utils
 from .database import Database
 from .loader import Modules

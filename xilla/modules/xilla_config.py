@@ -3,7 +3,7 @@ import contextlib
 import functools
 import typing
 from math import ceil
-from xillatl.tl.types import Message
+from hikkatl.tl.types import Message
 from .. import loader, translations, utils
 from ..inline.types import InlineCall
 ROW_SIZE = 3

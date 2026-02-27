@@ -1,11 +1,11 @@
 import logging
 import os
 import random
-import xillatl
-from xillatl.tl.functions.channels import JoinChannelRequest
-from xillatl.tl.functions.messages import GetDialogFiltersRequest, UpdateDialogFilterRequest
-from xillatl.tl.types import Message
-from xillatl.utils import get_display_name
+import hikkatl
+from hikkatl.tl.functions.channels import JoinChannelRequest
+from hikkatl.tl.functions.messages import GetDialogFiltersRequest, UpdateDialogFilterRequest
+from hikkatl.tl.types import Message
+from hikkatl.utils import get_display_name
 from .. import loader, log, main, utils
 from .._internal import fw_protect, restart
 from ..inline.types import InlineCall
@@ -228,7 +228,7 @@ class XillaSettingsMod(loader.Module):
     async def inline__setting(self, call: InlineCall, key: str, state: bool=False):
         if callable(key):
             key()
-            xillatl.extensions.html.CUSTOM_EMOJIS = not main.get_config_key('disable_custom_emojis')
+            hikkatl.extensions.html.CUSTOM_EMOJIS = not main.get_config_key('disable_custom_emojis')
         else:
             self._db.set(main.__name__, key, state)
         if key == 'no_nickname' and state and (self.get_prefix() == '.'):

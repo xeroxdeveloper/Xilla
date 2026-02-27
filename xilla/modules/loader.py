@@ -18,9 +18,9 @@ from collections import ChainMap
 from importlib.machinery import ModuleSpec
 from urllib.parse import urlparse
 import requests
-from xillatl.errors.rpcerrorlist import MediaCaptionTooLongError
-from xillatl.tl.functions.channels import JoinChannelRequest
-from xillatl.tl.types import Channel, Message
+from hikkatl.errors.rpcerrorlist import MediaCaptionTooLongError
+from hikkatl.tl.functions.channels import JoinChannelRequest
+from hikkatl.tl.types import Channel, Message
 from .. import loader, main, utils
 from .._local_storage import RemoteStorage
 from ..compat import dragon, geek
@@ -279,7 +279,7 @@ class LoaderMod(loader.Module):
                             requirements = list(filter(lambda x: not x.startswith(('-', '_', '.')), map(str.strip, loader.VALID_PIP_PACKAGES.search(doc)[1].split())))
                         except TypeError:
                             logger.warning('No valid pip packages specified in code, attemping installation from error')
-                            requirements = [{'sklearn': 'scikit-learn', 'pil': 'Pillow', 'xillatl': 'Xilla-TL', 'pyrogram': 'Xilla-Pyro'}.get(e.name.lower(), e.name)]
+                            requirements = [{'sklearn': 'scikit-learn', 'pil': 'Pillow', 'hikkatl': 'Xilla-TL', 'pyrogram': 'Xilla-Pyro'}.get(e.name.lower(), e.name)]
                         if not requirements:
                             raise Exception('Nothing to install') from e
                         logger.debug('Installing requirements: %s', requirements)

@@ -14,7 +14,7 @@ from functools import wraps
 from pathlib import Path
 from types import FunctionType, ModuleType
 from uuid import uuid4
-from xillatl.tl.tlobject import TLObject
+from hikkatl.tl.tlobject import TLObject
 from . import security, utils, validators
 from .database import Database
 from .inline.core import InlineManager

@@ -15,9 +15,9 @@ import typing
 from dataclasses import dataclass, field
 from importlib.abc import SourceLoader
 import requests
-from xillatl.hints import EntityLike
-from xillatl.tl.functions.account import UpdateNotifySettingsRequest
-from xillatl.tl.types import Channel, ChannelFull, InputPeerNotifySettings, Message, UserFull
+from hikkatl.hints import EntityLike
+from hikkatl.tl.functions.account import UpdateNotifySettingsRequest
+from hikkatl.tl.types import Channel, ChannelFull, InputPeerNotifySettings, Message, UserFull
 from . import version
 from ._reference_finder import replace_all_refs
 from .inline.types import BotInlineCall, BotInlineMessage, BotMessage, InlineCall, InlineMessage, InlineQuery, InlineUnit

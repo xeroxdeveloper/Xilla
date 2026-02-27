@@ -11,7 +11,7 @@ import os
 import time
 import zipfile
 from pathlib import Path
-from xillatl.tl.types import Message
+from hikkatl.tl.types import Message
 from .. import loader, utils
 from ..inline.types import BotInlineCall
 logger = logging.getLogger(__name__)

@@ -22,16 +22,16 @@ elif __package__ != 'xilla':
     print('🚫 Error: you cannot run this as a script; you must execute as a package')
 else:
     try:
-        import xillatl
+        import hikkatl
     except Exception:
         pass
     else:
         try:
-            import xillatl
-            if tuple(map(int, xillatl.__version__.split('.'))) < (2, 0, 4):
+            import hikkatl
+            if tuple(map(int, hikkatl.__version__.split('.'))) < (2, 0, 4):
                 raise ImportError
-            import xillapyro
-            if tuple(map(int, xillapyro.__version__.split('.'))) < (2, 0, 103):
+            import hikkapyro
+            if tuple(map(int, hikkapyro.__version__.split('.'))) < (2, 0, 103):
                 raise ImportError
         except ImportError:
             print('🔄 Installing dependencies...')

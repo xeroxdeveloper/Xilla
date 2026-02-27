@@ -5,15 +5,15 @@ import functools
 import logging
 import re
 import typing
-import xillatl
-from xillapyro import Client as PyroClient
-from xillapyro import errors as pyro_errors
-from xillapyro import raw
+import hikkatl
+from hikkapyro import Client as PyroClient
+from hikkapyro import errors as pyro_errors
+from hikkapyro import raw
 from .. import utils
 from ..tl_cache import CustomTelegramClient
 from ..version import __version__
-PROXY = {pyro_object: xillatl.tl.alltlobjects.tlobjects[constructor_id] for constructor_id, pyro_object in raw.all.objects.items() if constructor_id in xillatl.tl.alltlobjects.tlobjects}
-REVERSED_PROXY = {**{tl_object: pyro_object for pyro_object, tl_object in PROXY.items()}, **{tl_object: raw.all.objects[tl_object.CONSTRUCTOR_ID] for _, tl_object in utils.iter_attrs(xillatl.tl.custom) if getattr(tl_object, 'CONSTRUCTOR_ID', None) in raw.all.objects}}
+PROXY = {pyro_object: hikkatl.tl.alltlobjects.tlobjects[constructor_id] for constructor_id, pyro_object in raw.all.objects.items() if constructor_id in hikkatl.tl.alltlobjects.tlobjects}
+REVERSED_PROXY = {**{tl_object: pyro_object for pyro_object, tl_object in PROXY.items()}, **{tl_object: raw.all.objects[tl_object.CONSTRUCTOR_ID] for _, tl_object in utils.iter_attrs(hikkatl.tl.custom) if getattr(tl_object, 'CONSTRUCTOR_ID', None) in raw.all.objects}}
 PYRO_ERRORS = {cls.ID: cls for _, cls in utils.iter_attrs(pyro_errors) if hasattr(cls, 'ID') and issubclass(cls, pyro_errors.RPCError)}
 logger = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class PyroProxyClient(PyroClient):
         self.me = await self.get_me()
         self.tl_client.raw_updates_processor = self._on_event
 
-    def _on_event(self, event: typing.Union[xillatl.tl.types.Updates, xillatl.tl.types.UpdatesCombined, xillatl.tl.types.UpdateShort]):
+    def _on_event(self, event: typing.Union[hikkatl.tl.types.Updates, hikkatl.tl.types.UpdatesCombined, hikkatl.tl.types.UpdateShort]):
         asyncio.ensure_future(self.handle_updates(self._tl2pyro(event)))
 
     async def invoke(self, query: raw.core.TLObject, *args, **kwargs) -> typing.Union[typing.List[raw.core.TLObject], raw.core.TLObject]:
@@ -38,18 +38,18 @@ class PyroProxyClient(PyroClient):
             query = raw.functions.InvokeWithTakeout(takeout_id=self.tl_client.session.takeout_id, query=query)
         try:
             r = await self.tl_client(self._pyro2tl(query))
-        except xillatl.errors.rpcerrorlist.RPCError as e:
+        except hikkatl.errors.rpcerrorlist.RPCError as e:
             raise self._tl_error2pyro(e)
         return self._tl2pyro(r)
 
     @staticmethod
-    def _tl_error2pyro(error: xillatl.errors.rpcerrorlist.RPCError) -> pyro_errors.RPCError:
+    def _tl_error2pyro(error: hikkatl.errors.rpcerrorlist.RPCError) -> pyro_errors.RPCError:
         rpc = re.sub('([A-Z])', '_\\1', error.__class__.__name__).upper().strip('_').rsplit('ERROR', maxsplit=1)[0].strip('_')
         if rpc in PYRO_ERRORS:
             return PYRO_ERRORS[rpc]()
         return PYRO_ERRORS.get(f'{rpc}_X', PYRO_ERRORS.get(f'{rpc}_0', pyro_errors.RPCError))()
 
-    def _pyro2tl(self, pyro_obj: raw.core.TLObject) -> xillatl.tl.TLObject:
+    def _pyro2tl(self, pyro_obj: raw.core.TLObject) -> hikkatl.tl.TLObject:
         pyro_obj = self._convert(pyro_obj)
         if isinstance(pyro_obj, list):
             return [self._pyro2tl(i) for i in pyro_obj]
@@ -61,18 +61,18 @@ class PyroProxyClient(PyroClient):
             raise TypeError(f"Cannot convert Pyrogram's {type(pyro_obj)} to Telethon TLObject")
         return PROXY[type(pyro_obj)](**{attr: self._pyro2tl(getattr(pyro_obj, attr)) for attr in pyro_obj.__slots__})
 
-    def _tl2pyro(self, tl_obj: xillatl.tl.TLObject) -> raw.core.TLObject:
+    def _tl2pyro(self, tl_obj: hikkatl.tl.TLObject) -> raw.core.TLObject:
         tl_obj = self._convert(tl_obj)
         if isinstance(getattr(tl_obj, 'from_id', None), int) and tl_obj.from_id and hasattr(tl_obj, 'sender_id'):
             tl_obj = copy.copy(tl_obj)
-            tl_obj.from_id = xillatl.tl.types.PeerUser(tl_obj.sender_id)
+            tl_obj.from_id = hikkatl.tl.types.PeerUser(tl_obj.sender_id)
         if isinstance(tl_obj, list):
             return [self._tl2pyro(i) for i in tl_obj]
         if isinstance(tl_obj, dict):
             return {k: self._tl2pyro(v) for k, v in tl_obj.items()}
         if isinstance(tl_obj, int) and str(tl_obj).startswith('-100'):
             return int(str(tl_obj)[4:])
-        if not isinstance(tl_obj, xillatl.tl.TLObject):
+        if not isinstance(tl_obj, hikkatl.tl.TLObject):
             return tl_obj
         if type(tl_obj) not in REVERSED_PROXY:
             raise TypeError(f"Cannot convert Telethon's {type(tl_obj)} to Pyrogram TLObject")
@@ -96,7 +96,7 @@ class PyroProxyClient(PyroClient):
             return int(obj.timestamp())
         return obj
 
-    async def resolve_peer(self, *args, **kwargs) -> 'typing.Union[xillapyro.raw.types.PeerChat, xillapyro.raw.types.PeerChannel, xillapyro.raw.types.PeerUser]':
+    async def resolve_peer(self, *args, **kwargs) -> 'typing.Union[hikkapyro.raw.types.PeerChat, hikkapyro.raw.types.PeerChannel, hikkapyro.raw.types.PeerUser]':
         return self._tl2pyro(await self.tl_client.get_entity(*args, **kwargs))
 
     async def fetch_peers(self, peers: typing.List[typing.Union[raw.types.User, raw.types.Chat, raw.types.Channel]]) -> bool:

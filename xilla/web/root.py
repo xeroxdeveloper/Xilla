@@ -10,13 +10,13 @@ import aiohttp_jinja2
 import requests
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from .mock_aiohttp import web
-from xillatl.errors import FloodWaitError, PasswordHashInvalidError, PhoneCodeExpiredError, PhoneCodeInvalidError, SessionPasswordNeededError, YouBlockedUserError
-from xillatl.password import compute_check
-from xillatl.sessions import MemorySession
-from xillatl.tl.functions.account import GetPasswordRequest
-from xillatl.tl.functions.auth import CheckPasswordRequest
-from xillatl.tl.functions.contacts import UnblockRequest
-from xillatl.utils import parse_phone
+from hikkatl.errors import FloodWaitError, PasswordHashInvalidError, PhoneCodeExpiredError, PhoneCodeInvalidError, SessionPasswordNeededError, YouBlockedUserError
+from hikkatl.password import compute_check
+from hikkatl.sessions import MemorySession
+from hikkatl.tl.functions.account import GetPasswordRequest
+from hikkatl.tl.functions.auth import CheckPasswordRequest
+from hikkatl.tl.functions.contacts import UnblockRequest
+from hikkatl.utils import parse_phone
 from .. import database, main, utils
 from .._internal import restart
 from ..tl_cache import CustomTelegramClient

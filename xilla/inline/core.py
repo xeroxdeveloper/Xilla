@@ -6,10 +6,10 @@ import typing
 from aiogram import Bot, Dispatcher
 from aiogram.types import ParseMode
 from aiogram.utils.exceptions import TerminatedByOtherGetUpdates, Unauthorized
-from xillatl.errors.rpcerrorlist import InputUserDeactivatedError, YouBlockedUserError
-from xillatl.tl.functions.contacts import UnblockRequest
-from xillatl.tl.types import Message
-from xillatl.utils import get_display_name
+from hikkatl.errors.rpcerrorlist import InputUserDeactivatedError, YouBlockedUserError
+from hikkatl.tl.functions.contacts import UnblockRequest
+from hikkatl.tl.types import Message
+from hikkatl.utils import get_display_name
 from .. import utils
 from ..database import Database
 from ..tl_cache import CustomTelegramClient
