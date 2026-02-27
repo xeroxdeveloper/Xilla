@@ -1,43 +1,25 @@
-"""Entry point. Checks for user and starts main script"""
 import getpass
 import os
 import subprocess
 import sys
 from ._internal import restart
-if (
-    getpass.getuser() == "root"
-    and "--root" not in " ".join(sys.argv)
-    and all(trigger not in os.environ for trigger in {"DOCKER", "GOORM"})
-):
-    print("🚫" * 15)
-    print("You attempted to run Xilla on behalf of root user")
-    print("Please, create a new user and restart script")
-    print("If this action was intentional, pass --root argument instead")
-    print("🚫" * 15)
+if getpass.getuser() == 'root' and '--root' not in ' '.join(sys.argv) and all((trigger not in os.environ for trigger in {'DOCKER', 'GOORM'})):
+    print('🚫' * 15)
+    print('You attempted to run Xilla on behalf of root user')
+    print('Please, create a new user and restart script')
+    print('If this action was intentional, pass --root argument instead')
+    print('🚫' * 15)
     print()
-    print("Type force_insecure to ignore this warning")
-    if input("> ").lower() != "force_insecure":
+    print('Type force_insecure to ignore this warning')
+    if input('> ').lower() != 'force_insecure':
         sys.exit(1)
+
 def deps():
-    subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-            "--upgrade",
-            "-q",
-            "--disable-pip-version-check",
-            "--no-warn-script-location",
-            "-r",
-            "requirements.txt",
-        ],
-        check=True,
-    )
+    subprocess.run([sys.executable, '-m', 'pip', 'install', '--upgrade', '-q', '--disable-pip-version-check', '--no-warn-script-location', '-r', 'requirements.txt'], check=True)
 if sys.version_info < (3, 8, 0):
-    print("🚫 Error: you must use at least Python version 3.8.0")
-elif __package__ != "xilla":  
-    print("🚫 Error: you cannot run this as a script; you must execute as a package")
+    print('🚫 Error: you must use at least Python version 3.8.0')
+elif __package__ != 'xilla':
+    print('🚫 Error: you cannot run this as a script; you must execute as a package')
 else:
     try:
         import xillatl
@@ -45,14 +27,14 @@ else:
         pass
     else:
         try:
-            import xillatl  
-            if tuple(map(int, xillatl.__version__.split("."))) < (2, 0, 4):
+            import xillatl
+            if tuple(map(int, xillatl.__version__.split('.'))) < (2, 0, 4):
                 raise ImportError
             import xillapyro
-            if tuple(map(int, xillapyro.__version__.split("."))) < (2, 0, 103):
+            if tuple(map(int, xillapyro.__version__.split('.'))) < (2, 0, 103):
                 raise ImportError
         except ImportError:
-            print("🔄 Installing dependencies...")
+            print('🔄 Installing dependencies...')
             deps()
             restart()
     try:
@@ -60,9 +42,9 @@ else:
         log.init()
         from . import main
     except ImportError as e:
-        print(f"{str(e)}\n🔄 Attempting dependencies installation... Just wait ⏱")
+        print(f'{str(e)}\n🔄 Attempting dependencies installation... Just wait ⏱')
         deps()
         restart()
-    if "XILLA_DO_NOT_RESTART" in os.environ:
-        del os.environ["XILLA_DO_NOT_RESTART"]
-    main.xilla.main()  
+    if 'XILLA_DO_NOT_RESTART' in os.environ:
+        del os.environ['XILLA_DO_NOT_RESTART']
+    main.xilla.main()
