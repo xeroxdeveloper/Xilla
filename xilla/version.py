@@ -1,3 +1,3 @@
-__version__ = (3, 5, 0)
+__version__ = (3, 6, 0)
 branch = "main"
-codename = "Xilla A5"
+codename = "Xilla A6"
