@@ -1,3 +1,20 @@
+
+def _safe_input(prompt):
+    try:
+        return input(prompt)
+    except EOFError:
+        print("\n[!] EOF reached. Exiting.")
+        import sys
+        sys.exit(0)
+
+def _safe_getpass(prompt):
+    from getpass import getpass
+    try:
+        return getpass(prompt)
+    except EOFError:
+        print("\n[!] EOF reached. Exiting.")
+        import sys
+        sys.exit(0)
 import argparse
 import asyncio
 import collections
@@ -220,6 +237,16 @@ class Xilla:
             client._tg_id = telegram_id
             client.tg_id = telegram_id
             client.xilla_me = me
+        
+        # Prevent database locks
+        import os
+        journal_file = os.path.join(BASE_DIR, f'xilla-{telegram_id}.session-journal')
+        if os.path.exists(journal_file):
+            try:
+                os.remove(journal_file)
+            except Exception:
+                pass
+                
         session = SQLiteSession(os.path.join(BASE_DIR, f'xilla-{telegram_id}'))
         session.set_dc(client.session.dc_id, client.session.server_address, client.session.port)
         session.auth_key = client.session.auth_key
@@ -243,10 +270,9 @@ class Xilla:
         return False
 
     async def _phone_login(self, client: CustomTelegramClient) -> bool:
-        phone = input('\x1b[0;96mEnter phone: \x1b[0m' if IS_TERMUX or self.arguments.tty else 'Enter phone: ')
-        await client.start(phone)
+        await client.start(phone=lambda: _safe_input('[0;96mPhone: [0m' if IS_TERMUX or self.arguments.tty else 'Phone: '), password=lambda: _safe_getpass('[0;96mPassword: [0m' if IS_TERMUX or self.arguments.tty else 'Password: '), code_callback=lambda: _safe_input('[0;96mCode: [0m' if IS_TERMUX or self.arguments.tty else 'Code: '))
         await self.save_client_session(client)
-        self.clients += [client]
+        self.clients.append(client)
         return True
 
     async def _initial_setup(self) -> bool:
@@ -259,7 +285,7 @@ class Xilla:
             client = CustomTelegramClient(MemorySession(), self.api_token.ID, self.api_token.HASH, connection=self.conn, proxy=self.proxy, connection_retries=None, device_model=get_app_name(), system_version='Windows 10', app_version='.'.join(map(str, __version__)) + ' x64', lang_code='en', system_lang_code='en-US')
             await client.connect()
             print(('\x1b[0;96m{}\x1b[0m' if IS_TERMUX or self.arguments.tty else '{}').format("You can use QR-code to login from another device (your friend's phone, for example)."))
-            if input('\x1b[0;96mUse QR code? [y/N]: \x1b[0m' if IS_TERMUX or self.arguments.tty else 'Use QR code? [y/N]: ').lower() != 'y':
+            if _safe_input('\x1b[0;96mUse QR code? [y/N]: \x1b[0m' if IS_TERMUX or self.arguments.tty else 'Use QR code? [y/N]: ').lower() != 'y':
                 return await self._phone_login(client)
             print('\x1b[0;96mLoading QR code...\x1b[0m')
             qr_login = await client.qr_login()
@@ -409,6 +435,12 @@ class Xilla:
             logging.debug("Update check failed: %s", e)
 
         await modules.register_all(None)
+        
+        # AGGRESSIVE MEMORY OPTIMIZATION
+        import gc
+        gc.collect()
+        # Free up unused memory from loading modules
+        
         modules.send_config()
         await modules.send_ready()
         if first:
@@ -423,18 +455,34 @@ class Xilla:
             return
         self.loop.set_exception_handler(lambda _, x: logging.error('Exception on event loop! %s', x['message'], exc_info=x.get('exception', None)))
 
+        async def memory_optimizer():
+            import gc
+            while True:
+                await asyncio.sleep(600)  # Every 10 minutes
+                gc.collect()
+                
+        asyncio.ensure_future(memory_optimizer())
+
         async def supervisor(client):
             while True:
                 try:
                     await self.amain_wrapper(client)
                 except asyncio.CancelledError:
                     break
+                except EOFError:
+                    logging.error("Input EOF error - shutting down.")
+                    import sys
+                    sys.exit(0)
                 except Exception as e:
                     logging.critical(f'FATAL: Core event loop crashed for client {client.tg_id}! Supervisor is reviving it... Error: {e}', exc_info=True)
                     await asyncio.sleep(1)
         await asyncio.gather(*[supervisor(client) for client in self.clients])
 
     def main(self):
+        # AGGRESSIVE MEMORY OPTIMIZATION
+        import gc
+        gc.set_threshold(700, 10, 10) # Run GC much more frequently to keep RAM usage minimal
+        
         try:
             self.loop.run_until_complete(self._main())
         except KeyboardInterrupt:
