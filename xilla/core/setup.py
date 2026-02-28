@@ -9,13 +9,18 @@ from herokutl.tl.types import InputChatUploadedPhoto
 logger = logging.getLogger("XillaSetup")
 
 async def setup_xilla(client):
-    """Run initial setup routines (groups, bot creation)"""
+    """Run initial setup routines (groups, bot creation, bot adding)"""
     config = client.xilla_config
     
-    setup_done = config.get("core", "setup_done", False)
-    if setup_done:
-        return
-        
+    logs_id = config.get("core", "logs_chat")
+    backups_id = config.get("core", "backups_chat")
+    bot_token = config.get("core", "inline_bot_token")
+    
+    if logs_id and backups_id and bot_token:
+        # Check if setup_done is true just to prevent infinite /start messages
+        if config.get("core", "setup_done", False):
+            return
+            
     logger.info("☀️ Запуск первоначальной настройки Xilla...")
     
     # 1. Create or Find Groups
@@ -101,16 +106,51 @@ async def setup_xilla(client):
             logger.error(f"Сбой диалога с BotFather: {e}")
             
         # Fallback manual input if auto-creation failed
-        if not bot_token:
-            print("\n\033[38;2;255;100;100m[!] Автоматическое создание бота не удалось (возможно флуд-лимит BotFather).[0m")
+        if not config.get("core", "inline_bot_token"):
+            print("
+[38;2;255;100;100m[!] Автоматическое создание бота не удалось (возможно флуд-лимит BotFather).[0m")
             print("Пожалуйста, создайте бота вручную в @BotFather и введите его токен сюда:")
             try:
-                bot_token = input("Токен бота: ").strip()
-                if bot_token:
-                    config.set("core", "inline_bot_token", bot_token)
+                manual_token = input("Токен бота: ").strip()
+                if manual_token:
+                    config.set("core", "inline_bot_token", manual_token)
                     logger.info("Токен сохранен!")
+                    # Extract bot username from token
+                    bot_username = await client.get_entity(manual_token.split(":")[0])
+                    bot_username = bot_username.username
+                    config.set("core", "inline_bot_username", bot_username)
             except Exception:
                 pass
+
+    # 3. Add Bot to Groups and Start Initial Config
+    bot_username = config.get("core", "inline_bot_username")
+    if bot_username:
+        try:
+            from herokutl.tl.functions.channels import InviteToChannelRequest
+            
+            # Add to Logs
+            if logs_id:
+                try:
+                    await client(InviteToChannelRequest(logs_id, [bot_username]))
+                    logger.info(f"🤖 Бот добавлен в Xilla Logs")
+                except Exception:
+                    pass
+                    
+            # Add to Backups
+            if backups_id:
+                try:
+                    await client(InviteToChannelRequest(backups_id, [bot_username]))
+                    logger.info(f"🤖 Бот добавлен в Xilla Backups")
+                except Exception:
+                    pass
+                    
+            # Send /start to bot to trigger setup wizard if not done yet
+            if not config.get("core", "setup_done", False):
+                await client.send_message(bot_username, "/start")
+                logger.info("🤖 Отправлена команда /start для запуска мастера настройки.")
+                
+        except Exception as e:
+            logger.error(f"Ошибка при добавлении бота в группы: {e}")
 
     config.set("core", "setup_done", True)
     logger.info("☀️ Первоначальная настройка завершена!")

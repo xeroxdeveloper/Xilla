@@ -1,1 +1,11 @@
-{"api_id": 23519587, "api_hash": "30a493f9f5de08150661e5864b6b4152"}
+{
+    "api_id": 23519587,
+    "api_hash": "30a493f9f5de08150661e5864b6b4152",
+    "modules": {
+        "core": {
+            "logs_chat": 3804584194,
+            "backups_chat": 3877112260,
+            "setup_done": true
+        }
+    }
+}
