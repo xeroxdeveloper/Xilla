@@ -14,7 +14,6 @@ from hikkatl.tl.types import Message
 from hikkatl.utils import is_list_like
 from .. import loader, utils
 from ..inline.types import InlineCall
-from ..web.debugger import WebDebugger
 logger = logging.getLogger(__name__)
 GROUPS = [
     "auth",

@@ -116,8 +116,12 @@ class InlineManager(Utils, Events, TokenObtainment, Form, Gallery, QueryGallery,
         self._cleaner_task = asyncio.ensure_future(self._cleaner())
 
     async def _stop(self):
-        self._task.cancel()
-        self._dp.stop_polling()
+        try:
+            self._task.cancel()
+            await self._dp.stop_polling()
+            await self.bot.session.close()
+        except Exception:
+            pass
         self._cleaner_task.cancel()
 
     def pop_web_auth_token(self, token: str) -> bool:

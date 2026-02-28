@@ -357,7 +357,7 @@ class Xilla:
             import git
             repo = git.Repo()
             build = utils.get_git_hash()
-            diff = repo.git.log([f'HEAD..origin/{"master"}', '--oneline'])
+            diff = repo.git.log([f'HEAD..origin/main', '--oneline'])
             upd = 'Update required' if diff else 'Up-to-date'
             logo = f'█ █ █ █▄▀ █▄▀ ▄▀█\n█▀█ █ █ █ █ █ █▀█\n\n• Build: {build[:7]}\n• Version: {'.'.join(list(map(str, list(__version__))))}\n• {upd}\n'
             if not self.omit_log:
@@ -443,10 +443,10 @@ class Xilla:
                 if client.is_connected():
                     self.loop.run_until_complete(client.disconnect())
         finally:
-            self.loop.close()
             print("Xilla successfully closed.")
-            import sys
-            sys.exit(0)
+            import os, signal
+            os.kill(os.getpid(), signal.SIGKILL)
+
 
 hikkatl.extensions.html.CUSTOM_EMOJIS = not get_config_key('disable_custom_emojis')
 xilla = Xilla()
