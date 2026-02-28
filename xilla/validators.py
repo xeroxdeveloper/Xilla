@@ -9,6 +9,7 @@ ConfigAllowedTypes = typing.Union[tuple, list, str, int, bool, None]
 ALLOWED_EMOJIS = set(get_emoji_unicode_dict('en').values())
 
 class ValidationError(Exception):
+    pass
 
 class Validator:
 

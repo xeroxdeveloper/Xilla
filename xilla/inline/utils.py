@@ -1,3 +1,12 @@
+class _AiogramExceptionMock(Exception):
+    pass
+TerminatedByOtherGetUpdates = _AiogramExceptionMock
+Unauthorized = _AiogramExceptionMock
+BadRequest = _AiogramExceptionMock
+MessageIdInvalid = _AiogramExceptionMock
+MessageNotModified = _AiogramExceptionMock
+RetryAfter = _AiogramExceptionMock
+NetworkError = _AiogramExceptionMock
 import asyncio
 import contextlib
 import functools
@@ -10,7 +19,6 @@ import typing
 from copy import deepcopy
 from urllib.parse import urlparse
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, InputFile, InputMediaAnimation, InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo
-from aiogram.utils.exceptions import BadRequest, MessageIdInvalid, MessageNotModified, RetryAfter
 from hikkatl.utils import resolve_inline_message_id
 from .. import utils
 from ..types import XillaReplyMarkup
@@ -24,7 +32,7 @@ class Utils(InlineUnit):
             return None
         if isinstance(markup_obj, InlineKeyboardMarkup):
             return markup_obj
-        markup = InlineKeyboardMarkup()
+        markup = InlineKeyboardMarkup(inline_keyboard=[])
         map_ = self._units[markup_obj]['buttons'] if isinstance(markup_obj, str) else markup_obj
         map_ = self._normalize_markup(map_)
         setup_callbacks = False
@@ -56,25 +64,25 @@ class Utils(InlineUnit):
                         if not utils.check_url(button['url']):
                             logger.warning('Button have not been added to form, because its url is invalid')
                             continue
-                        line += [InlineKeyboardButton(button['text'], url=button['url'])]
+                        line += [InlineKeyboardButton(text=button['text'], url=button['url'])]
                     elif 'callback' in button:
-                        line += [InlineKeyboardButton(button['text'], callback_data=button['_callback_data'])]
+                        line += [InlineKeyboardButton(text=button['text'], callback_data=button['_callback_data'])]
                         if setup_callbacks:
                             self._custom_map[button['_callback_data']] = {'handler': button['callback'], **({'always_allow': button['always_allow']} if button.get('always_allow', False) else {}), **({'args': button['args']} if button.get('args', False) else {}), **({'kwargs': button['kwargs']} if button.get('kwargs', False) else {}), **({'force_me': True} if button.get('force_me', False) else {}), **({'disable_security': True} if button.get('disable_security', False) else {})}
                     elif 'input' in button:
-                        line += [InlineKeyboardButton(button['text'], switch_inline_query_current_chat=button['_switch_query'] + ' ')]
+                        line += [InlineKeyboardButton(text=button['text'], switch_inline_query_current_chat=button['_switch_query'] + ' ')]
                     elif 'data' in button:
-                        line += [InlineKeyboardButton(button['text'], callback_data=button['data'])]
+                        line += [InlineKeyboardButton(text=button['text'], callback_data=button['data'])]
                     elif 'switch_inline_query_current_chat' in button:
-                        line += [InlineKeyboardButton(button['text'], switch_inline_query_current_chat=button['switch_inline_query_current_chat'])]
+                        line += [InlineKeyboardButton(text=button['text'], switch_inline_query_current_chat=button['switch_inline_query_current_chat'])]
                     elif 'switch_inline_query' in button:
-                        line += [InlineKeyboardButton(button['text'], switch_inline_query_current_chat=button['switch_inline_query'])]
+                        line += [InlineKeyboardButton(text=button['text'], switch_inline_query_current_chat=button['switch_inline_query'])]
                     else:
                         logger.warning('Button have not been added to form, because it is not structured properly. %s', button)
                 except KeyError:
                     logger.exception('Error while forming markup! Probably, you passed wrong type combination for button. Contact developer of module.')
                     return False
-            markup.row(*line)
+            markup.inline_keyboard.append(line)
         return markup
     generate_markup = _generate_markup
 

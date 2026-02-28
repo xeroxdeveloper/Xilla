@@ -1,3 +1,5 @@
+import concurrent.futures
+import functools
 import asyncio
 import collections
 try:
@@ -23,6 +25,7 @@ __all__ = ['Database', 'PointerList', 'PointerDict', 'NamedTupleMiddlewareDict',
 logger = logging.getLogger(__name__)
 
 class NoAssetsChannel(Exception):
+    pass
 
 class Database(dict):
 
@@ -73,7 +76,7 @@ class Database(dict):
         self._db_file = main.BASE_PATH / f'config-{self._client.tg_id}.json'
         self.read()
         try:
-            self._assets, _ = await utils.asset_channel(self._client, 'xilla-assets', '🌆 Your Xilla assets will be stored here', archive=True, avatar='https://raw.githubusercontent.com/xeroxdeveloper/assets/master/xilla-assets.png')
+            self._assets, _ = await utils.asset_channel(self._client, 'xilla-assets', '🌆 Your Xilla assets will be stored here', archive=True, avatar='https://image.pollinations.ai/prompt/beautiful_aesthetic_shining_sun_minimalist_vector_icon_orange_yellow_gradient?width=256&height=256&nologo=true')
         except ChannelsTooMuchError:
             self._assets = None
             logger.error("Can't find and/or create assets folder\nThis may cause several consequences, such as:\n- Non working assets feature (e.g. notes)\n- This error will occur every restart\n\nYou can solve this by leaving some channels/groups")
@@ -87,7 +90,7 @@ class Database(dict):
             return
         try:
             self.update(**json.loads(self._db_file.read_text()))
-        except json.decoder.JSONDecodeError:
+        except ValueError:
             logger.warning('Database read failed! Creating new one...')
         except FileNotFoundError:
             logger.debug('Database file not found, creating new one...')

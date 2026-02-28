@@ -49,11 +49,12 @@ class StringLoader(SourceLoader):
 
 class Module:
     strings = {'name': 'Unknown'}
-    'There is no help for this module'
 
     def config_complete(self):
+        pass
 
     async def client_ready(self):
+        pass
 
     def internal_init(self):
         self.db = self.allmodules.db
@@ -68,8 +69,10 @@ class Module:
         self._tg_id = self._client.tg_id
 
     async def on_unload(self):
+        pass
 
     async def on_dlmod(self):
+        pass
 
     async def invoke(self, command: str, args: typing.Optional[str]=None, peer: typing.Optional[EntityLike]=None, message: typing.Optional[Message]=None, edit: bool=False) -> Message:
         if command not in self.allmodules.commands:
@@ -407,6 +410,7 @@ class SelfSuspend(Exception):
         return self._error
 
 class StopLoop(Exception):
+    pass
 
 class ModuleConfig(dict):
 
@@ -464,6 +468,7 @@ class ModuleConfig(dict):
 LibraryConfig = ModuleConfig
 
 class _Placeholder:
+    pass
 
 async def wrap(func: typing.Callable[[], typing.Awaitable]) -> typing.Any:
     with contextlib.suppress(Exception):

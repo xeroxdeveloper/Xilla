@@ -1,3 +1,12 @@
+class _AiogramExceptionMock(Exception):
+    pass
+TerminatedByOtherGetUpdates = _AiogramExceptionMock
+Unauthorized = _AiogramExceptionMock
+BadRequest = _AiogramExceptionMock
+MessageIdInvalid = _AiogramExceptionMock
+MessageNotModified = _AiogramExceptionMock
+RetryAfter = _AiogramExceptionMock
+NetworkError = _AiogramExceptionMock
 import asyncio
 import contextlib
 import copy
@@ -9,7 +18,6 @@ import traceback
 import typing
 from urllib.parse import urlparse
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineQuery, InlineQueryResultGif, InlineQueryResultPhoto, InputMediaAnimation, InputMediaPhoto
-from aiogram.utils.exceptions import BadRequest, RetryAfter
 from hikkatl.errors.rpcerrorlist import ChatSendInlineForbiddenError
 from hikkatl.extensions.html import CUSTOM_EMOJIS
 from hikkatl.tl.types import Message
@@ -94,7 +102,7 @@ class Gallery(InlineUnit):
         self._custom_map[btn_call_data] = {'handler': asyncio.coroutine(functools.partial(self._gallery_page, unit_id=unit_id)), **({'ttl': self._units[unit_id]['ttl']} if 'ttl' in self._units[unit_id] else {}), **({'always_allow': always_allow} if always_allow else {}), **({'force_me': force_me} if force_me else {}), **({'disable_security': disable_security} if disable_security else {}), **({'perms_map': perms_map} if perms_map else {}), **({'message': message} if isinstance(message, Message) else {})}
         if isinstance(message, Message) and (not silent):
             try:
-                status_message = await (message.edit if message.out else message.respond)((utils.get_platform_emoji() if self._client.xilla_me.premium and CUSTOM_EMOJIS else '🌘') + self.translator.getkey('inline.opening_gallery'), **{'reply_to': utils.get_topic(message)} if message.out else {})
+                status_message = await (message.edit if message.out else message.respond)((utils.get_platform_emoji() if self._client.xilla_me.premium and CUSTOM_EMOJIS else '☀️') + self.translator.getkey('inline.opening_gallery'), **{'reply_to': utils.get_topic(message)} if message.out else {})
             except Exception:
                 status_message = None
         else:

@@ -31,12 +31,12 @@ from .tl_cache import CustomTelegramClient
 from .translations import Translator
 from .version import __version__
 try:
-    from .web import core
+    pass
 except ImportError:
     web_available = False
     logging.exception('Unable to import web')
 else:
-    web_available = True
+    web_available = False
 BASE_DIR = '/data' if 'DOCKER' in os.environ else os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 BASE_PATH = Path(BASE_DIR)
 CONFIG_PATH = BASE_PATH / 'config.json'
@@ -83,7 +83,7 @@ def save_config_key(key: str, value: str) -> bool:
     except FileNotFoundError:
         config = {}
     config[key] = value
-    CONFIG_PATH.write_text(json.dumps(config, indent=4))
+    CONFIG_PATH.write_text(json.dumps(config) if not hasattr(json, 'dumps') else json.dumps(config, option=json.OPT_INDENT_2).decode('utf-8') if type(json.dumps(config)) is bytes else json.dumps(config, indent=4))
     return True
 
 def gen_port(cfg: str='port', no8080: bool=False) -> int:
@@ -131,6 +131,7 @@ class SuperList(list):
             return [getattr(x, attr) for x in self]
 
 class InteractiveAuthRequired(Exception):
+    pass
 
 def raise_auth():
     raise InteractiveAuthRequired()
@@ -187,9 +188,15 @@ class Xilla:
         if not web_available or getattr(self.arguments, 'disable_web', False) or IS_TERMUX:
             self.web = None
             return
-        self.web = core.Web(data_root=BASE_DIR, api_token=self.api_token, proxy=self.proxy, connection=self.conn)
+        self.web = None
 
     async def _get_token(self):
+        import os
+        from collections import namedtuple
+        if os.environ.get('API_ID') and os.environ.get('API_HASH'):
+            ApiToken = namedtuple('ApiToken', ['ID', 'HASH'])
+            self.api_token = ApiToken(int(os.environ['API_ID']), os.environ['API_HASH'])
+            return
         while self.api_token is None:
             if self.arguments.no_auth:
                 return
@@ -244,6 +251,9 @@ class Xilla:
 
     async def _initial_setup(self) -> bool:
         if self.arguments.no_auth:
+            return False
+        import os
+        if 'API_ID' in os.environ:
             return False
         if not self.web:
             client = CustomTelegramClient(MemorySession(), self.api_token.ID, self.api_token.HASH, connection=self.conn, proxy=self.proxy, connection_retries=None, device_model=get_app_name(), system_version='Windows 10', app_version='.'.join(map(str, __version__)) + ' x64', lang_code='en', system_lang_code='en-US')
@@ -347,15 +357,15 @@ class Xilla:
             import git
             repo = git.Repo()
             build = utils.get_git_hash()
-            diff = repo.git.log([f'HEAD..origin/{version.branch}', '--oneline'])
+            diff = repo.git.log([f'HEAD..origin/{"master"}', '--oneline'])
             upd = 'Update required' if diff else 'Up-to-date'
             logo = f'█ █ █ █▄▀ █▄▀ ▄▀█\n█▀█ █ █ █ █ █ █▀█\n\n• Build: {build[:7]}\n• Version: {'.'.join(list(map(str, list(__version__))))}\n• {upd}\n'
             if not self.omit_log:
                 print(logo)
                 web_url = f'🌐 Web url: {self.web.url}' if self.web and hasattr(self.web, 'url') else ''
-                logging.debug('\n🌘 Xilla %s #%s (%s) started\n%s', '.'.join(list(map(str, list(__version__)))), build[:7], upd, web_url)
+                logging.debug('\n☀️ Xilla %s #%s (%s) started\n%s', '.'.join(list(map(str, list(__version__)))), build[:7], upd, web_url)
                 self.omit_log = True
-            await client.xilla_inline.bot.send_animation(logging.getLogger().handlers[0].get_logid_by_client(client.tg_id), 'https://github.com/xeroxdeveloper/assets/raw/master/xilla_banner.mp4', caption='🌘 <b>Xilla {} started!</b>\n\n🌳 <b>GitHub commit SHA: <a href="https://github.com/xeroxdeveloper/Xilla/commit/{}">{}</a></b>\n✊ <b>Update status: {}</b>\n<b>{}</b>'.format('.'.join(list(map(str, list(__version__)))), build, build[:7], upd, web_url))
+            pass
             logging.debug('· Started for %s · Prefix: «%s» ·', client.tg_id, client.xilla_db.get(__name__, 'command_prefix', False) or '.')
         except Exception:
             logging.exception('Badge error')
@@ -414,7 +424,18 @@ class Xilla:
         await asyncio.gather(*[supervisor(client) for client in self.clients])
 
     def main(self):
-        self.loop.run_until_complete(self._main())
-        self.loop.close()
+        try:
+            self.loop.run_until_complete(self._main())
+        except KeyboardInterrupt:
+            print("\n[!] Shutdown requested. Closing Xilla...")
+            for client in self.clients:
+                if client.is_connected():
+                    self.loop.run_until_complete(client.disconnect())
+        finally:
+            self.loop.close()
+            print("Xilla successfully closed.")
+            import sys
+            sys.exit(0)
+
 hikkatl.extensions.html.CUSTOM_EMOJIS = not get_config_key('disable_custom_emojis')
 xilla = Xilla()

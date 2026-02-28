@@ -20,7 +20,7 @@ def die():
 
 def restart():
     if 'XILLA_DO_NOT_RESTART' in os.environ:
-        print('Got in a loop, exiting\nYou probably need to manually remove existing packages and then restart Xilla. Run `pip uninstall -y telethon telethon-mod xilla-tl pyrogram xilla-pyro`, then restart Xilla.')
+        print('Got in a loop, exiting\nYou probably need to manually remove existing packages and then restart Xilla. Run `pip uninstall -y telethon telethon-mod hikkatl pyrogram hikkapyro`, then restart Xilla.')
         sys.exit(0)
     logging.getLogger().setLevel(logging.CRITICAL)
     print('🔄 Restarting...')

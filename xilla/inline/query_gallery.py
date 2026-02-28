@@ -46,6 +46,6 @@ class QueryGallery(InlineUnit):
                     continue
             id_ = utils.rand(16)
             self._custom_map[id_] = {'handler': i['next_handler'], 'ttl': round(time.time()) + 120, **({'always_allow': always_allow} if always_allow else {}), **({'force_me': force_me} if force_me else {}), **({'disable_security': disable_security} if disable_security else {}), **({'caption': i['caption']} if 'caption' in i else {})}
-            result += [InlineQueryResultArticle(id=utils.rand(20), title=i['title'], description=i['description'], input_message_content=InputTextMessageContent(f'🌘 <b>Opening gallery...</b>\n<i>#id: {id_}</i>', 'HTML', disable_web_page_preview=True), thumb_url=photo_url, thumb_width=128, thumb_height=128)]
+            result += [InlineQueryResultArticle(id=utils.rand(20), title=i['title'], description=i['description'], input_message_content=InputTextMessageContent(message_text=f'☀️ <b>Opening gallery...</b>\n<i>#id: {id_}</i>', parse_mode='HTML', disable_web_page_preview=True), thumbnail_url=photo_url, thumbnail_width=128, thumbnail_height=128)]
         await query.answer(result, cache_time=0)
         return True

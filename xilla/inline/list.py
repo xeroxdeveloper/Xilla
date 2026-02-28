@@ -7,7 +7,6 @@ import time
 import traceback
 import typing
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineQuery, InlineQueryResultArticle, InputTextMessageContent
-from aiogram.utils.exceptions import RetryAfter
 from hikkatl.errors.rpcerrorlist import ChatSendInlineForbiddenError
 from hikkatl.extensions.html import CUSTOM_EMOJIS
 from hikkatl.tl.types import Message
@@ -58,7 +57,7 @@ class List(InlineUnit):
         self._custom_map[btn_call_data] = {'handler': functools.partial(self._list_page, unit_id=unit_id), **({'ttl': self._units[unit_id]['ttl']} if 'ttl' in self._units[unit_id] else {}), **({'always_allow': always_allow} if always_allow else {}), **({'force_me': force_me} if force_me else {}), **({'disable_security': disable_security} if disable_security else {}), **({'perms_map': perms_map} if perms_map else {}), **({'message': message} if isinstance(message, Message) else {})}
         if isinstance(message, Message) and (not silent):
             try:
-                status_message = await (message.edit if message.out else message.respond)((utils.get_platform_emoji() if self._client.xilla_me.premium and CUSTOM_EMOJIS else '🌘') + self.translator.getkey('inline.opening_list'), **{'reply_to': utils.get_topic(message)} if message.out else {})
+                status_message = await (message.edit if message.out else message.respond)((utils.get_platform_emoji() if self._client.xilla_me.premium and CUSTOM_EMOJIS else '☀️') + self.translator.getkey('inline.opening_list'), **{'reply_to': utils.get_topic(message)} if message.out else {})
             except Exception:
                 status_message = None
         else:
@@ -115,7 +114,7 @@ class List(InlineUnit):
         for unit in self._units.copy().values():
             if inline_query.from_user.id == self._me and inline_query.query == unit['uid'] and (unit['type'] == 'list'):
                 try:
-                    await inline_query.answer([InlineQueryResultArticle(id=utils.rand(20), title='Xilla', input_message_content=InputTextMessageContent(self.sanitise_text(unit['strings'][0]), 'HTML', disable_web_page_preview=True), reply_markup=self._list_markup(inline_query.query))], cache_time=60)
+                    await inline_query.answer([InlineQueryResultArticle(id=utils.rand(20), title='Xilla', input_message_content=InputTextMessageContent(message_text=self.sanitise_text(unit['strings'][0]), parse_mode='HTML', disable_web_page_preview=True), reply_markup=self._list_markup(inline_query.query))], cache_time=60)
                 except Exception as e:
                     if unit['uid'] in self._error_events:
                         self._error_events[unit['uid']].set()

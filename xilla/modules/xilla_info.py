@@ -15,7 +15,7 @@ class XillaInfoMod(loader.Module):
             ),
             loader.ConfigValue(
                 "custom_button",
-                ["🌘 Support chat", "https://t.me/xilla_talks"],
+                ["☀️ Support chat", "https://t.me/xilla_talks"],
                 lambda: self.strings("_cfg_cst_btn"),
                 validator=loader.validators.Union(
                     loader.validators.Series(fixed_len=2),
@@ -24,7 +24,7 @@ class XillaInfoMod(loader.Module):
             ),
             loader.ConfigValue(
                 "banner_url",
-                "https://github.com/xeroxdeveloper/assets/raw/master/xilla_banner.mp4",
+                "https://img.icons8.com/color/452/sun.png",
                 lambda: self.strings("_cfg_banner"),
                 validator=loader.validators.Link(),
             ),
@@ -62,7 +62,7 @@ class XillaInfoMod(loader.Module):
             platform = platform.replace(emoji, icon)
         return (
             (
-                "<b>🌘 Xilla</b>\n"
+                "<b>☀️ Xilla</b>\n"
                 if "xilla" not in self.config["custom_message"].lower()
                 else ""
             )
@@ -80,17 +80,17 @@ class XillaInfoMod(loader.Module):
             )
             if self.config["custom_message"]
             else (
-                f'<b>{ } </b>\n\n<b>{ }  {self.strings("owner")}:</b> {me}\n\n<b>{ } '
-                f' {self.strings("version")}:</b> {_version} {build}\n<b>{ } '
+                f'<b>X </b>\n\n<b>X  {self.strings("owner")}:</b> {me}\n\n<b>X '
+                f' {self.strings("version")}:</b> {_version} {build}\n<b>X '
                 f' {self.strings("branch")}:'
-                f"</b> <code>{version.branch}</code>\n{upd}\n\n<b>{ } "
-                f' {self.strings("prefix")}:</b> {prefix}\n<b>{ } '
+                f"</b> <code>{version.branch}</code>\n{upd}\n\n<b>X "
+                f' {self.strings("prefix")}:</b> {prefix}\n<b>X '
                 f' {self.strings("uptime")}:'
-                f"</b> {utils.formatted_uptime()}\n\n<b>{ } "
+                f"</b> {utils.formatted_uptime()}\n\n<b>X "
                 f' {self.strings("cpu_usage")}:'
-                f"</b> <i>~{utils.get_cpu_usage()} %</i>\n<b>{ } "
+                f"</b> <i>~{utils.get_cpu_usage()} %</i>\n<b>X "
                 f' {self.strings("ram_usage")}:'
-                f"</b> <i>~{utils.get_ram_usage()} MB</i>\n<b>{ } </b>"
+                f"</b> <i>~{utils.get_ram_usage()} MB</i>\n<b>X </b>"
             ).format(
                 *map(
                     lambda x: utils.remove_html(x) if inline else x,
@@ -98,7 +98,7 @@ class XillaInfoMod(loader.Module):
                         (
                             utils.get_platform_emoji()
                             if self._client.xilla_me.premium and not inline
-                            else "🌘 Xilla"
+                            else "☀️ Xilla"
                         ),
                         "<emoji document_id=5373141891321699086>😎</emoji>",
                         "<emoji document_id=5469741319330996757>💫</emoji>",
@@ -122,7 +122,7 @@ class XillaInfoMod(loader.Module):
             else None
         )
     @loader.inline_handler(
-        thumb_url="https://img.icons8.com/external-others-inmotus-design/344/external-Moon-round-icons-others-inmotus-design-2.png"
+        thumb_url="https://img.icons8.com/color/452/sun.png"
     )
     @loader.inline_everyone
     async def info(self, _: InlineQuery) -> dict:
@@ -136,29 +136,33 @@ class XillaInfoMod(loader.Module):
                 else {"message": self._render_info(True)}
             ),
             "thumb": (
-                "https://github.com/xeroxdeveloper/Xilla/raw/master/assets/xilla_pfp.png"
+                "https://img.icons8.com/color/452/sun.png"
             ),
             "reply_markup": self._get_mark(),
         }
     @loader.command()
     async def infocmd(self, message: Message):
-        if self.config["custom_button"]:
-            await self.inline.form(
-                message=message,
-                text=self._render_info(True),
-                reply_markup=self._get_mark(),
-                **(
-                    {"photo": self.config["banner_url"]}
-                    if self.config["banner_url"]
-                    else {}
-                ),
-            )
-        else:
-            await utils.answer_file(
-                message,
-                self.config["banner_url"],
-                self._render_info(False),
-            )
+        try:
+            if self.config["custom_button"]:
+                await self.inline.form(
+                    message=message,
+                    text=self._render_info(True),
+                    reply_markup=self._get_mark(),
+                    **(
+                        {"photo": self.config["banner_url"]}
+                        if self.config["banner_url"]
+                        else {}
+                    ),
+                )
+            else:
+                await utils.answer_file(
+                    message,
+                    self.config["banner_url"],
+                    self._render_info(False),
+                )
+        except Exception:
+            await utils.answer(message, self._render_info(False))
+
     @loader.command()
     async def xillainfo(self, message: Message):
         await utils.answer(message, self.strings("desc"))

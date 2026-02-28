@@ -363,7 +363,7 @@ def get_named_platform() -> str:
 
 def get_platform_emoji() -> str:
     from . import main
-    BASE = ''.join(('<emoji document_id={}>🌘</emoji>', '<emoji document_id=5195311729663286630>🌘</emoji>', '<emoji document_id=5195045669324201904>🌘</emoji>'))
+    BASE = ''.join(('<emoji document_id={}>☀️</emoji>', '<emoji document_id=5195311729663286630>☀️</emoji>', '<emoji document_id=5195045669324201904>☀️</emoji>'))
     if main.IS_DOCKER:
         return BASE.format(5298554256603752468)
     if main.IS_LAVHOST:
@@ -550,3 +550,21 @@ def get_version_raw() -> str:
     from . import version
     return '.'.join(map(str, list(version.__version__)))
 get_platform_name = get_named_platform
+import json
+
+def _safe_json_dump(obj, path):
+    try:
+        import orjson
+        data = orjson.dumps(obj, option=orjson.OPT_INDENT_2)
+        if hasattr(path, 'write_bytes'):
+            path.write_bytes(data)
+        else:
+            with open(path, 'wb') as f:
+                f.write(data)
+    except (ImportError, TypeError):
+        data = json.dumps(obj, indent=4)
+        if hasattr(path, 'write_text'):
+            path.write_text(data)
+        else:
+            with open(path, 'w') as f:
+                f.write(data)

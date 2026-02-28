@@ -1,3 +1,4 @@
+import importlib.util
 import asyncio
 import contextlib
 import copy
@@ -42,6 +43,7 @@ async def stop_placeholder() -> bool:
     return True
 
 class Placeholder:
+    pass
 VALID_PIP_PACKAGES = re.compile('^\\s*# ?requires:(?: ?)((?:{url} )*(?:{url}))\\s*$'.format(url="[-[\\]_.~:/?#@!$&'()*+,;%<=>a-zA-Z0-9]+"), re.MULTILINE)
 USER_INSTALL = 'PIP_TARGET' not in os.environ and 'VIRTUAL_ENV' not in os.environ
 
@@ -271,7 +273,7 @@ class Modules:
                 module_name = f'{__package__}.{MODULES_NAME}.{mod_shortname}'
                 user_friendly_origin = ('<core {}>' if origin == '<core>' else '<file {}>').format(module_name)
                 logger.debug('Loading %s from filesystem', module_name)
-                spec = importlib.machinery.ModuleSpec(module_name, StringLoader(Path(mod).read_text(), user_friendly_origin), origin=user_friendly_origin)
+                spec = importlib.util.spec_from_file_location(module_name, mod)
                 loaded += [await self.register_module(spec, module_name, origin)]
             except Exception as e:
                 logger.exception('Failed to load module %s due to %s:', mod, e)
@@ -592,6 +594,7 @@ class Modules:
         return bool(self.aliases.pop(alias.lower().strip(), None))
 
     async def log(self, *args, **kwargs):
+        pass
 
     async def reload_translations(self) -> bool:
         if not await self.translator.init():

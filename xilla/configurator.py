@@ -1,3 +1,4 @@
+import os
 import re
 import string
 import sys
@@ -14,7 +15,7 @@ def api_config(tty: typing.Optional[bool]=None):
     from ._internal import print_banner
     if tty is None:
         print('\x1b[0;91mThe quick brown fox jumps over the lazy dog\x1b[0m')
-        tty = input('Is the text above colored? [y/N]').lower() == 'y'
+        tty = False
     if tty:
         print_banner('banner.txt')
     tty_print('\x1b[0;95mWelcome to Xilla Userbot!\x1b[0m', tty)

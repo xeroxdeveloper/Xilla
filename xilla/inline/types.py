@@ -58,7 +58,7 @@ class BotInlineMessage:
 class InlineCall(CallbackQuery, InlineMessage):
 
     def __init__(self, call: CallbackQuery, inline_manager: 'InlineManager', unit_id: str):
-        CallbackQuery.__init__(self)
+        CallbackQuery.__init__(self, **call.model_dump())
         for attr in {'id', 'from_user', 'message', 'inline_message_id', 'chat_instance', 'data', 'game_short_name'}:
             setattr(self, attr, getattr(call, attr, None))
         self.original_call = call
@@ -67,7 +67,7 @@ class InlineCall(CallbackQuery, InlineMessage):
 class BotInlineCall(CallbackQuery, BotInlineMessage):
 
     def __init__(self, call: CallbackQuery, inline_manager: 'InlineManager', unit_id: str):
-        CallbackQuery.__init__(self)
+        CallbackQuery.__init__(self, **call.model_dump())
         for attr in {'id', 'from_user', 'message', 'chat', 'chat_instance', 'data', 'game_short_name'}:
             setattr(self, attr, getattr(call, attr, None))
         self.original_call = call
@@ -76,6 +76,7 @@ class BotInlineCall(CallbackQuery, BotInlineMessage):
 class InlineUnit:
 
     def __init__(self):
+        pass
 
 class BotMessage(AiogramMessage):
 
@@ -93,7 +94,7 @@ class InlineQuery(AiogramInlineQuery):
 
     @staticmethod
     def _get_res(title: str, description: str, thumb_url: str) -> list:
-        return [InlineQueryResultArticle(id=utils.rand(20), title=title, description=description, input_message_content=InputTextMessageContent('😶\u200d🌫️ <i>There is nothing here...</i>', parse_mode='HTML'), thumb_url=thumb_url, thumb_width=128, thumb_height=128)]
+        return [InlineQueryResultArticle(id=utils.rand(20), title=title, description=description, input_message_content=InputTextMessageContent(message_text='😶\u200d🌫️ <i>There is nothing here...</i>', parse_mode='HTML'), thumbnail_url=thumb_url, thumbnail_width=128, thumbnail_height=128)]
 
     async def e400(self):
         await self.answer(self._get_res('🚫 400', "Bad request. You need to pass right arguments, follow module's documentation", 'https://img.icons8.com/color/344/swearing-male--v1.png'), cache_time=0)

@@ -36,7 +36,7 @@ class TokenObtainment(InlineUnit):
             else:
                 uid = utils.rand(6)
                 username = f'@xilla_{uid}_bot'
-            for msg in [f'🌘 Xilla Userbot of {self._name}'[:64], username, '/setuserpic', username]:
+            for msg in [f'☀️ Xilla Userbot of {self._name}'[:64], username, '/setuserpic', username]:
                 await fw_protect()
                 m = await conv.send_message(msg)
                 r = await conv.get_response()

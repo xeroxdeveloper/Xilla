@@ -1,3 +1,12 @@
+class _AiogramExceptionMock(Exception):
+    pass
+TerminatedByOtherGetUpdates = _AiogramExceptionMock
+Unauthorized = _AiogramExceptionMock
+BadRequest = _AiogramExceptionMock
+MessageIdInvalid = _AiogramExceptionMock
+MessageNotModified = _AiogramExceptionMock
+RetryAfter = _AiogramExceptionMock
+NetworkError = _AiogramExceptionMock
 import asyncio
 import inspect
 import io
@@ -9,11 +18,9 @@ import traceback
 import typing
 from logging.handlers import RotatingFileHandler
 import hikkatl
-from aiogram.utils.exceptions import NetworkError
 from . import utils
 from .tl_cache import CustomTelegramClient
 from .types import BotInlineCall, Module
-from .web.debugger import WebDebugger
 old = linecache.getlines
 
 def getlines(filename: str, module_globals=None) -> str:
@@ -112,57 +119,8 @@ class TelegramLogsHandler(logging.Handler):
     def dumps(self, lvl: int=0, client_id: typing.Optional[int]=None) -> typing.List[str]:
         return [self.targets[0].format(record) for record in self.buffer + self.handledbuffer if record.levelno >= lvl and (not record.xilla_caller or client_id == record.xilla_caller)]
 
-    async def _show_full_trace(self, call: BotInlineCall, bot: 'aiogram.Bot', item: XillaException):
-        chunks = item.message + '\n\n<b>🪐 Full traceback:</b>\n' + item.full_stack
-        chunks = list(utils.smart_split(*hikkatl.extensions.html.parse(chunks), 4096))
-        await call.edit(chunks[0], reply_markup=self._gen_web_debug_button(item))
-        for chunk in chunks[1:]:
-            await bot.send_message(chat_id=call.chat_id, text=chunk)
-
-    def _gen_web_debug_button(self, item: XillaException) -> list:
-        if not item.sysinfo:
-            return []
-        if not (url := item.debug_url):
-            try:
-                url = self.web_debugger.feed(*item.sysinfo)
-            except Exception:
-                url = None
-            item.debug_url = url
-        return [{'text': '🐞 Web debugger', 'url': url} if self.web_debugger else {'text': '🪲 Start debugger', 'callback': self._start_debugger, 'args': (item,)}]
-
-    async def _start_debugger(self, call: 'InlineCall', item: XillaException):
-        if not self.web_debugger:
-            self.web_debugger = WebDebugger()
-            await self.web_debugger.proxy_ready.wait()
-        url = self.web_debugger.feed(*item.sysinfo)
-        item.debug_url = url
-        await call.edit(item.message, reply_markup=self._gen_web_debug_button(item))
-        await call.answer('Web debugger started. You can get PIN using .debugger command. \n⚠️ !DO NOT GIVE IT TO ANYONE! ⚠️', show_alert=True)
-
-    def get_logid_by_client(self, client_id: int) -> int:
-        return self._mods[client_id].logchat
-
-    async def sender(self):
-        async with self._send_lock:
-            self._queue = {client_id: utils.chunks(utils.escape_html(''.join([item[0] for item in self.tg_buff if isinstance(item[0], str) and (not item[1] or item[1] == client_id or self.force_send_all)])), 4096) for client_id in self._mods}
-            self._exc_queue = {client_id: [self._mods[client_id].inline.bot.send_message(self._mods[client_id].logchat, item[0].message, reply_markup=self._mods[client_id].inline.generate_markup([{'text': '🪐 Full traceback', 'callback': self._show_full_trace, 'args': (self._mods[client_id].inline.bot, item[0]), 'disable_security': True}, *self._gen_web_debug_button(item[0])])) for item in self.tg_buff if isinstance(item[0], XillaException) and (not item[1] or item[1] == client_id or self.force_send_all)] for client_id in self._mods}
-            for exceptions in self._exc_queue.values():
-                for exc in exceptions:
-                    await exc
-            self.tg_buff = []
-            for client_id in self._mods:
-                if client_id not in self._queue:
-                    continue
-                if len(self._queue[client_id]) > 5:
-                    logfile = io.BytesIO(''.join(self._queue[client_id]).encode('utf-8'))
-                    logfile.name = 'xilla-logs.txt'
-                    logfile.seek(0)
-                    await self._mods[client_id].inline.bot.send_document(self._mods[client_id].logchat, logfile, caption='<b>🧳 Journals are too big to be sent as separate messages</b>')
-                    self._queue[client_id] = []
-                    continue
-                while self._queue[client_id]:
-                    if (chunk := self._queue[client_id].pop(0)):
-                        asyncio.ensure_future(self._mods[client_id].inline.bot.send_message(self._mods[client_id].logchat, f'<code>{chunk}</code>', disable_notification=True))
+    async def _show_full_trace(self, call, bot, item):
+        pass
 
     def emit(self, record: logging.LogRecord):
         try:

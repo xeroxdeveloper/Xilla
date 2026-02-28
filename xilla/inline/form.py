@@ -17,9 +17,10 @@ from .. import main, utils
 from ..types import XillaReplyMarkup
 from .types import InlineMessage, InlineUnit
 logger = logging.getLogger(__name__)
-VERIFICATION_EMOJIES = list(grapheme.graphemes('👨\u200d🏫👩\u200d🏫👨\u200d🎤🧑\u200d🎤👩\u200d🎤👨\u200d🎓👩\u200d🎓👩\u200d🍳👩\u200d🌾👩\u200d⚕️🕵️\u200d♀️💂\u200d♀️👷\u200d♂️👮\u200d♂️👴🧑\u200d🦳👩\u200d🦳👱\u200d♀️👩\u200d🦰👨\u200d🦱👩\u200d⚖️🧙\u200d♂️🧝\u200d♀️🧛\u200d♀️🎅🧚\u200d♂️🙆\u200d♀️🙍\u200d♂️👩\u200d👦🧶🪢🪡🧵🩲👖👕👚🦺👗👙🩱👘🥻🩴🥿🧦🥾👟👞👢👡👠🪖👑💍👝👛👜💼🌂🥽🕶👓🧳🎒🐶🐱🐭🐹🐰🦊🐻🐷🐮🦁🐯🐨🐻\u200d❄️🐼🐽🐸🐵🙈🙉🙊🐒🦆🐥🐣🐤🐦🐧🐔🦅🦉🦇🐺🐗🐴🦄🐜🐞🐌🦋🐛🪱🐝🪰🪲🪳🦟🦗🕷🕸🐙🦕🦖🦎🐍🐢🦂🦑🦐🦞🦀🐡🐠🐟🐅🐊🦭🦈🐋🐳🐬🐆🦓🦍🦧🦣🐘🦛🐃🦬🦘🦒🐫🐪🦏🐂🐄🐎🐖🐏🐑🦙🐈🐕\u200d🦺🦮🐩🐕🦌🐐🐈\u200d⬛🪶🐓🦃🦤🦚🦜🦡🦨🦝🐇🕊🦩🦢🦫🦦🦥🐁🐀🐿🦔🌳🌲🌵🐲🐉🐾🎋🍂🍁🍄🐚🌾🪨💐🌷🥀🌺🌸🌻🌞🌜🌘🌗🌎🪐💫⭐️✨⚡️☄️💥☀️🌪🔥🌈🌤⛅️❄️⛄️🌊☂️🍏🍎🍐🍊🍋🍌🍉🥭🍑🍒🍈🫐🍓🍇🍍🥥🥝🍅🥑🥦🧔\u200d♂️'))
+VERIFICATION_EMOJIES = list(grapheme.graphemes('👨\u200d🏫👩\u200d🏫👨\u200d🎤🧑\u200d🎤👩\u200d🎤👨\u200d🎓👩\u200d🎓👩\u200d🍳👩\u200d🌾👩\u200d⚕️🕵️\u200d♀️💂\u200d♀️👷\u200d♂️👮\u200d♂️👴🧑\u200d🦳👩\u200d🦳👱\u200d♀️👩\u200d🦰👨\u200d🦱👩\u200d⚖️🧙\u200d♂️🧝\u200d♀️🧛\u200d♀️🎅🧚\u200d♂️🙆\u200d♀️🙍\u200d♂️👩\u200d👦🧶🪢🪡🧵🩲👖👕👚🦺👗👙🩱👘🥻🩴🥿🧦🥾👟👞👢👡👠🪖👑💍👝👛👜💼🌂🥽🕶👓🧳🎒🐶🐱🐭🐹🐰🦊🐻🐷🐮🦁🐯🐨🐻\u200d❄️🐼🐽🐸🐵🙈🙉🙊🐒🦆🐥🐣🐤🐦🐧🐔🦅🦉🦇🐺🐗🐴🦄🐜🐞🐌🦋🐛🪱🐝🪰🪲🪳🦟🦗🕷🕸🐙🦕🦖🦎🐍🐢🦂🦑🦐🦞🦀🐡🐠🐟🐅🐊🦭🦈🐋🐳🐬🐆🦓🦍🦧🦣🐘🦛🐃🦬🦘🦒🐫🐪🦏🐂🐄🐎🐖🐏🐑🦙🐈🐕\u200d🦺🦮🐩🐕🦌🐐🐈\u200d⬛🪶🐓🦃🦤🦚🦜🦡🦨🦝🐇🕊🦩🦢🦫🦦🦥🐁🐀🐿🦔🌳🌲🌵🐲🐉🐾🎋🍂🍁🍄🐚🌾🪨💐🌷🥀🌺🌸🌻🌞🌜☀️🌗🌎🪐💫⭐️✨⚡️☄️💥☀️🌪🔥🌈🌤⛅️❄️⛄️🌊☂️🍏🍎🍐🍊🍋🍌🍉🥭🍑🍒🍈🫐🍓🍇🍍🥥🥝🍅🥑🥦🧔\u200d♂️'))
 
 class Placeholder:
+    pass
 
 class Form(InlineUnit):
 
@@ -95,7 +96,7 @@ class Form(InlineUnit):
             return False
         if isinstance(message, Message) and (not silent):
             try:
-                status_message = await (message.edit if message.out else message.respond)((utils.get_platform_emoji() if self._client.xilla_me.premium and CUSTOM_EMOJIS else '🌘') + self.translator.getkey('inline.opening_form'), **{'reply_to': utils.get_topic(message)} if message.out else {})
+                status_message = await (message.edit if message.out else message.respond)((utils.get_platform_emoji() if self._client.xilla_me.premium and CUSTOM_EMOJIS else '☀️') + self.translator.getkey('inline.opening_form'), **{'reply_to': utils.get_topic(message)} if message.out else {})
             except Exception:
                 status_message = None
         else:
@@ -150,18 +151,18 @@ class Form(InlineUnit):
         for unit in self._units.copy().values():
             for button in utils.array_sum(unit.get('buttons', [])):
                 if '_switch_query' in button and 'input' in button and (button['_switch_query'] == query) and (inline_query.from_user.id in [self._me] + self._client.dispatcher.security._owner + unit.get('always_allow', [])):
-                    await inline_query.answer([InlineQueryResultArticle(id=utils.rand(20), title=button['input'], description=self.translator.getkey('inline.keep_id').format(random.choice(VERIFICATION_EMOJIES)), input_message_content=InputTextMessageContent('🔄 <b>Transferring value to userbot...</b>\n<i>This message will be deleted automatically</i>' if inline_query.from_user.id == self._me else '🔄 <b>Transferring value to userbot...</b>', 'HTML', disable_web_page_preview=True))], cache_time=60)
+                    await inline_query.answer([InlineQueryResultArticle(id=utils.rand(20), title=button['input'], description=self.translator.getkey('inline.keep_id').format(random.choice(VERIFICATION_EMOJIES)), input_message_content=InputTextMessageContent(message_text='🔄 <b>Transferring value to userbot...</b>\n<i>This message will be deleted automatically</i>' if inline_query.from_user.id == self._me else '🔄 <b>Transferring value to userbot...</b>', parse_mode='HTML', disable_web_page_preview=True))], cache_time=60)
                     return
         if inline_query.query not in self._units or self._units[inline_query.query]['type'] != 'form':
             return
         form = self._units[inline_query.query]
         try:
             if 'photo' in form:
-                await inline_query.answer([InlineQueryResultPhoto(id=utils.rand(20), title='Xilla', description='Xilla', caption=form.get('text'), parse_mode='HTML', photo_url=form['photo'], thumb_url='https://img.icons8.com/cotton/452/moon-satellite.png', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
+                await inline_query.answer([InlineQueryResultPhoto(id=utils.rand(20), title='Xilla', description='Xilla', caption=form.get('text'), parse_mode='HTML', photo_url=form['photo'], thumbnail_url='https://img.icons8.com/color/452/sun.png', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
             elif 'gif' in form:
-                await inline_query.answer([InlineQueryResultGif(id=utils.rand(20), title='Xilla', caption=form.get('text'), parse_mode='HTML', gif_url=form['gif'], thumb_url='https://img.icons8.com/cotton/452/moon-satellite.png', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
+                await inline_query.answer([InlineQueryResultGif(id=utils.rand(20), title='Xilla', caption=form.get('text'), parse_mode='HTML', gif_url=form['gif'], thumbnail_url='https://img.icons8.com/color/452/sun.png', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
             elif 'video' in form:
-                await inline_query.answer([InlineQueryResultVideo(id=utils.rand(20), title='Xilla', description='Xilla', caption=form.get('text'), parse_mode='HTML', video_url=form['video'], thumb_url='https://img.icons8.com/cotton/452/moon-satellite.png', mime_type='video/mp4', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
+                await inline_query.answer([InlineQueryResultVideo(id=utils.rand(20), title='Xilla', description='Xilla', caption=form.get('text'), parse_mode='HTML', video_url=form['video'], thumbnail_url='https://img.icons8.com/color/452/sun.png', mime_type='video/mp4', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
             elif 'file' in form:
                 await inline_query.answer([InlineQueryResultDocument(id=utils.rand(20), title='Xilla', description='Xilla', caption=form.get('text'), parse_mode='HTML', document_url=form['file'], mime_type=form['mime_type'], reply_markup=self.generate_markup(form['uid']))], cache_time=0)
             elif 'location' in form:
@@ -169,7 +170,7 @@ class Form(InlineUnit):
             elif 'audio' in form:
                 await inline_query.answer([InlineQueryResultAudio(id=utils.rand(20), audio_url=form['audio']['url'], caption=form.get('text'), parse_mode='HTML', title=form['audio'].get('title', 'Xilla'), performer=form['audio'].get('performer'), audio_duration=form['audio'].get('duration'), reply_markup=self.generate_markup(form['uid']))], cache_time=0)
             else:
-                await inline_query.answer([InlineQueryResultArticle(id=utils.rand(20), title='Xilla', input_message_content=InputTextMessageContent(form['text'], 'HTML', disable_web_page_preview=True), reply_markup=self.generate_markup(inline_query.query))], cache_time=0)
+                await inline_query.answer([InlineQueryResultArticle(id=utils.rand(20), title='Xilla', input_message_content=InputTextMessageContent(message_text=form['text'], parse_mode='HTML', disable_web_page_preview=True), reply_markup=self.generate_markup(inline_query.query))], cache_time=0)
         except Exception as e:
             if form['uid'] in self._error_events:
                 self._error_events[form['uid']].set()
