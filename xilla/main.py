@@ -385,7 +385,7 @@ class Xilla:
             build = utils.get_git_hash()
             diff = repo.git.log([f'HEAD..origin/main', '--oneline'])
             upd = 'Update required' if diff else 'Up-to-date'
-            logo = f'█ █ █ █▄▀ █▄▀ ▄▀█\n█▀█ █ █ █ █ █ █▀█\n\n• Build: {build[:7]}\n• Version: {'.'.join(list(map(str, list(__version__))))}\n• {upd}\n'
+            logo = f'▀▄▀ █ █   █   ▄▀█\n█ █ █ █▄▄ █▄▄ █▀█\n\n• Build: {build[:7]}\n• Version: {'.'.join(list(map(str, list(__version__))))}\n• {upd}\n'
             if not self.omit_log:
                 print(logo)
                 web_url = f'🌐 Web url: {self.web.url}' if self.web and hasattr(self.web, 'url') else ''

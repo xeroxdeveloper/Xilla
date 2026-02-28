@@ -58,19 +58,18 @@ class BotInlineMessage:
 class InlineCall(CallbackQuery, InlineMessage):
 
     def __init__(self, call: CallbackQuery, inline_manager: 'InlineManager', unit_id: str):
+        # Aiogram 3 Pydantic models are frozen, we just init from original call directly without setattr
         CallbackQuery.__init__(self, **call.model_dump())
-        for attr in {'id', 'from_user', 'message', 'inline_message_id', 'chat_instance', 'data', 'game_short_name'}:
-            setattr(self, attr, getattr(call, attr, None))
-        self.original_call = call
+        
+        # Bypass pydantic freeze using __dict__ for custom non-field attrs
+        self.__dict__['original_call'] = call
         InlineMessage.__init__(self, inline_manager, unit_id, call.inline_message_id)
 
 class BotInlineCall(CallbackQuery, BotInlineMessage):
 
     def __init__(self, call: CallbackQuery, inline_manager: 'InlineManager', unit_id: str):
         CallbackQuery.__init__(self, **call.model_dump())
-        for attr in {'id', 'from_user', 'message', 'chat', 'chat_instance', 'data', 'game_short_name'}:
-            setattr(self, attr, getattr(call, attr, None))
-        self.original_call = call
+        self.__dict__['original_call'] = call
         BotInlineMessage.__init__(self, inline_manager, unit_id, call.message.chat.id, call.message.message_id)
 
 class InlineUnit:
