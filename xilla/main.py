@@ -438,6 +438,8 @@ class Xilla:
         sys.modules['hikka'] = sys.modules['xilla']
         sys.modules['userbot'] = sys.modules['xilla']
         sys.modules['heroku'] = sys.modules['xilla']
+        sys.modules['geektg'] = sys.modules['xilla']
+        sys.modules['geek'] = sys.modules['xilla']
         
         await modules.register_all(None)
         
