@@ -1,16 +1,15 @@
 import os
 import aiohttp
 import tempfile
+import json
 from xilla.core import Module, command
 from herokutl.tl.types import Message
-from herokutl.tl.custom.button import Button
 
 class InstallerMod(Module):
     """Модуль для скачивания плагинов и установки"""
 
     def __init__(self):
         super().__init__()
-        # Temporary storage for files waiting for installation choice
         self.pending_installs = {}
 
     @command("install")
@@ -24,9 +23,7 @@ class InstallerMod(Module):
             
         await message.edit("⏳ Подготовка к установке...")
         
-        # Determine installation mode preference
         install_mode = message.client.xilla_config.get("installer", "mode")
-        
         code = ""
         filename = ""
         
@@ -57,41 +54,50 @@ class InstallerMod(Module):
         except Exception as e:
             return await message.edit(f"❌ Системная ошибка загрузки: {e}", parse_mode="HTML")
 
-        # If user has a saved preference, execute immediately
         if install_mode == "always_disk":
             await self._save_and_load(message, filename, code, save_to_disk=True)
         elif install_mode == "always_memory":
             await self._save_and_load(message, filename, code, save_to_disk=False)
         else:
-            # First time install or no preference set: ask via Bot API inline buttons!
-            # Since we can only send real inline keyboards via bot or userbot clicking bot, 
-            # let's just use the bot to ask the question in the log channel or chat.
-            
-            # Actually, userbots can't SEND inline buttons. We must send a message using the inline bot 
-            # or just ask for a command response.
-            
-            # Since we have an inline bot configured, we can ask the bot to send the keyboard to the Logs channel,
-            # but that's complex. Let's do a simple interactive terminal-like approach or command-based approach.
-            
+            bot_token = message.client.xilla_config.get("core", "inline_bot_token")
             bot_username = message.client.xilla_config.get("core", "inline_bot_username")
-            if bot_username:
-                # We can use inline bot via inline query to generate a button, but it's easier to just ask the user
-                # to reply with a choice, OR we can generate an inline keyboard if we send it via our bot token.
-                pass
+            
+            if bot_token and bot_username:
+                # Cache the code to install later
+                install_id = f"{message.chat_id}_{message.id}"
+                self.pending_installs[install_id] = {"filename": filename, "code": code, "original_msg": message}
                 
-            # Alternative: Text-based interactive menu
-            self.pending_installs[message.chat_id] = {"filename": filename, "code": code, "msg_id": message.id}
-            
-            text = (
-                f"📦 <b>Установка модуля:</b> <code>{filename}</code>\n\n"
-                f"<i>Как вы хотите установить этот модуль? Выберите вариант и отправьте соответствующую цифру в ответ:</i>\n\n"
-                f"<b>1.</b> 💾 Сохранить на диск (Останется после перезагрузки)\n"
-                f"<b>2.</b> 🧠 Установить в память (Удалится при перезагрузке)\n"
-                f"<b>3.</b> 🔒 Всегда сохранять на диск (Больше не спрашивать)\n"
-                f"<b>4.</b> 🚫 Отмена"
-            )
-            await message.edit(text, parse_mode="HTML")
-            
+                text = f"📦 <b>Установка модуля:</b> {filename}\n\n<i>Как вы хотите установить этот модуль?</i>"
+                keyboard = {
+                    "inline_keyboard": [
+                        [{"text": "💾 Сохранить на диск", "callback_data": f"inst_disk_{install_id}"}],
+                        [{"text": "🧠 В оперативную память", "callback_data": f"inst_mem_{install_id}"}],
+                        [{"text": "🔒 Всегда на диск (Больше не спрашивать)", "callback_data": f"inst_alw_{install_id}"}],
+                        [{"text": "🚫 Отмена", "callback_data": f"inst_can_{install_id}"}]
+                    ]
+                }
+                
+                # Send via Bot API to Bot's PM to ensure the bot can send it (bots can't message users first unless they started it)
+                # Since the user started the bot during setup, sending to user's ID works!
+                me = await message.client.get_me()
+                try:
+                    async with aiohttp.ClientSession() as session:
+                        api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+                        payload = {
+                            "chat_id": me.id,
+                            "text": text,
+                            "parse_mode": "HTML",
+                            "reply_markup": json.dumps(keyboard)
+                        }
+                        await session.post(api_url, json=payload)
+                        
+                    await message.edit(f"⏳ <b>Подтвердите установку в личных сообщениях с ботом @{bot_username}...</b>", parse_mode="HTML")
+                except Exception as e:
+                    await message.edit(f"❌ Ошибка отправки кнопок: {e}")
+            else:
+                # Fallback
+                await self._save_and_load(message, filename, code, save_to_disk=True)
+
     async def _save_and_load(self, message, filename, code, save_to_disk):
         if save_to_disk:
             filepath = os.path.join("plugins", filename)
@@ -103,9 +109,6 @@ class InstallerMod(Module):
             except Exception as e:
                 await message.edit(f"❌ Ошибка загрузки: {e}", parse_mode="HTML")
         else:
-            # Load in memory
-            # We can write to a temp file and load it, then delete it.
-            # But loader needs a file path.
             import tempfile
             fd, path = tempfile.mkstemp(suffix=".py", prefix="xilla_mem_")
             with os.fdopen(fd, 'w', encoding='utf-8') as f:
@@ -121,38 +124,50 @@ class InstallerMod(Module):
                     os.remove(path)
                 except: pass
 
-    # We need to catch the reply
     async def on_load(self):
         from herokutl import events
         
-        async def reply_handler(event):
-            if not event.message.out:
-                return
+        # Intercept callback queries from the bot
+        bot_username = self.client.xilla_config.get("core", "inline_bot_username")
+        if bot_username:
+            @self.client.on(events.CallbackQuery())
+            async def installer_callback_handler(event):
+                data = event.data.decode('utf-8')
+                if not data.startswith("inst_"):
+                    return
+                    
+                parts = data.split("_", 2)
+                if len(parts) < 3: return
                 
-            reply = await event.get_reply_message()
-            if not reply or event.chat_id not in self.pending_installs:
-                return
+                action = parts[1]
+                install_id = parts[2]
                 
-            pending = self.pending_installs[event.chat_id]
-            if reply.id == pending["msg_id"]:
-                choice = event.raw_text.strip()
+                if install_id not in self.pending_installs:
+                    return await event.answer("❌ Сессия установки устарела", alert=True)
+                    
+                pending = self.pending_installs[install_id]
                 filename = pending["filename"]
                 code = pending["code"]
+                orig_msg = pending["original_msg"]
                 
-                if choice == "1":
-                    await self._save_and_load(reply, filename, code, True)
-                    del self.pending_installs[event.chat_id]
-                elif choice == "2":
-                    await self._save_and_load(reply, filename, code, False)
-                    del self.pending_installs[event.chat_id]
-                elif choice == "3":
-                    event.client.xilla_config.set("installer", "mode", "always_disk")
-                    await self._save_and_load(reply, filename, code, True)
-                    del self.pending_installs[event.chat_id]
-                elif choice == "4":
-                    await reply.edit("🚫 Установка отменена.")
-                    del self.pending_installs[event.chat_id]
+                bot_token = self.client.xilla_config.get("core", "inline_bot_token")
+                
+                async def delete_bot_msg():
+                    async with aiohttp.ClientSession() as session:
+                        await session.post(f"https://api.telegram.org/bot{bot_token}/deleteMessage", json={"chat_id": event.chat_id, "message_id": event.message_id})
+
+                if action == "disk":
+                    await self._save_and_load(orig_msg, filename, code, True)
+                    await delete_bot_msg()
+                elif action == "mem":
+                    await self._save_and_load(orig_msg, filename, code, False)
+                    await delete_bot_msg()
+                elif action == "alw":
+                    self.client.xilla_config.set("installer", "mode", "always_disk")
+                    await self._save_and_load(orig_msg, filename, code, True)
+                    await delete_bot_msg()
+                elif action == "can":
+                    await orig_msg.edit("🚫 Установка отменена.")
+                    await delete_bot_msg()
                     
-                await event.delete()
-                
-        self.client.add_event_handler(reply_handler, events.NewMessage())
+                del self.pending_installs[install_id]
