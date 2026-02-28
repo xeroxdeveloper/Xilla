@@ -139,7 +139,7 @@ async def setup_xilla(client):
             # 2. Теперь бот в кэше, добавляем его в группы
             # Resolve entities for adding to channels
             try:
-                bot_user = await client.get_input_entity(bot_username)
+                bot_user = await client.get_entity(f"@{bot_username}")
             except Exception:
                 bot_user = bot_username
 
@@ -158,7 +158,7 @@ async def setup_xilla(client):
             # Add to Logs
             if logs_id:
                 try:
-                    logs_channel = await client.get_input_entity(logs_id)
+                    logs_channel = await client.get_entity(logs_id)
                     await client(InviteToChannelRequest(logs_channel, [bot_user]))
                     logger.info("🤖 Бот добавлен в Xilla Logs")
                 except Exception as e:
@@ -167,7 +167,7 @@ async def setup_xilla(client):
             # Add to Backups
             if backups_id:
                 try:
-                    backups_channel = await client.get_input_entity(backups_id)
+                    backups_channel = await client.get_entity(backups_id)
                     await client(InviteToChannelRequest(backups_channel, [bot_user]))
                     logger.info("🤖 Бот добавлен в Xilla Backups")
                 except Exception as e:
@@ -196,11 +196,22 @@ async def setup_xilla(client):
                 
         # We need peer objects to add to folders
         include_peers = []
-        bot_peer = await client.get_input_entity(bot_username) if bot_username else None
-        if bot_peer: include_peers.append(bot_peer)
+        try:
+            bot_ent = await client.get_entity(f"@{bot_username}") if bot_username else None
+            bot_peer = await client.get_input_entity(bot_ent) if bot_ent else None
+            if bot_peer: include_peers.append(bot_peer)
+        except Exception: pass
         
-        logs_peer = await client.get_input_entity(logs_id) if logs_id else None
-        if logs_peer: include_peers.append(logs_peer)
+        try:
+            logs_ent = await client.get_entity(logs_id) if logs_id else None
+            logs_peer = await client.get_input_entity(logs_ent) if logs_ent else None
+            if logs_peer: include_peers.append(logs_peer)
+        except Exception: pass
+        
+        try:
+            logs_peer = await client.get_input_entity(logs_id) if logs_id else None
+            if logs_peer: include_peers.append(logs_peer)
+        except Exception: pass
         
         if not xilla_folder_exists and include_peers:
             logger.info("Создание папки Xilla в Telegram...")
@@ -229,9 +240,13 @@ async def setup_xilla(client):
                 from herokutl.tl.functions.folders import EditPeerFoldersRequest
                 from herokutl.tl.types import InputFolderPeer
                 logger.info("Отправка Xilla Backups в Архив...")
+                
+                backup_ent = await client.get_entity(backups_id)
+                backup_peer = await client.get_input_entity(backup_ent)
+                
                 await client(EditPeerFoldersRequest(
                     folder_peers=[InputFolderPeer(
-                        peer=await client.get_input_entity(backups_id),
+                        peer=backup_peer,
                         folder_id=1 # 1 is Telegram's builtin Archive folder
                     )]
                 ))
