@@ -3,6 +3,8 @@ import sys
 import importlib.util
 import logging
 import inspect
+import asyncio
+import traceback
 from herokutl import events
 
 # Magic global dict for legacy compatibility routing
@@ -53,26 +55,39 @@ class ModuleLoader:
                     self.modules.append(instance)
                     self.logger.debug(f"Loaded module {name}")
         except Exception as e:
+            # Feature 6: Crash protection
+            err = traceback.format_exc()
             self.logger.error(f"Failed to load {name}: {e}")
+            if self.client.is_connected():
+                asyncio.create_task(self.client.send_message("me", f"<b>❌ Ошибка (Crash Protection) при загрузке {name}:</b>\n<code>{e}</code>", parse_mode="HTML"))
 
     def _register_commands(self, instance):
         for name, method in inspect.getmembers(instance, inspect.iscoroutinefunction):
             if hasattr(method, "_xilla_command"):
                 cmd_name = method._xilla_command
                 
-                # Herokutl Event Handler
-                async def wrapper(event, method=method):
-                    if event.message.out: # Default to outgoing only for now
-                        # Cut prefix and command
+                # Async Task Queue Wrapper (Feature 3)
+                async def wrapper(event, method=method, instance=instance):
+                    if event.message.out:
                         text = event.raw_text
                         args = text.split(" ", 1)[1] if len(text.split()) > 1 else ""
                         event.args = args
-                        try:
-                            await method(event)
-                        except Exception as e:
-                            self.logger.error(f"Command Error: {e}")
+                        
+                        async def background_task():
+                            try:
+                                await method(instance, event)
+                            except Exception as e:
+                                err = traceback.format_exc()
+                                self.logger.error(f"Command Error: {err}")
+                                try:
+                                    await event.edit(f"<b>❌ Ошибка в {cmd_name}:</b>\n<code>{e}</code>", parse_mode="HTML")
+                                except:
+                                    pass
+
+                        # Feature 3: Async Task Queue (Create task so it doesn't block)
+                        asyncio.create_task(background_task())
                 
-                self.client.add_event_handler(wrapper, events.NewMessage(pattern=f"^\.{cmd_name}(?: |$)"))
+                self.client.add_event_handler(wrapper, events.NewMessage(pattern=r"^\." + cmd_name + r"(?: |$)"))
 
 def command(name=None):
     def decorator(func):

@@ -4,7 +4,10 @@ import logging
 import asyncio
 from herokutl import TelegramClient, events
 from xilla.core.loader import ModuleLoader
-from xilla.core.config import get_api_credentials
+from xilla.core.config import get_api_credentials, ConfigManager
+from xilla.core.i18n import I18n
+from xilla.core.db import XillaDB
+from xilla.utils.cache import MediaCache
 
 class XillaClient:
     def __init__(self):
@@ -12,12 +15,22 @@ class XillaClient:
         self.api_id, self.api_hash = get_api_credentials()
         self.session_path = os.path.join(os.getcwd(), "xilla.session")
         self.client = TelegramClient(self.session_path, self.api_id, self.api_hash, device_model="Xilla Userbot", system_version="Linux", app_version="A1")
-        self.loader = ModuleLoader(self.client)
+        
+        # Attach core utilities to client so modules can access them
+        self.client.xilla_config = ConfigManager()
+        self.client.xilla_i18n = I18n(self.client.xilla_config)
+        self.client.xilla_db = XillaDB()
+        self.client.xilla_cache = MediaCache()
+        
+        self.client.xilla_loader = ModuleLoader(self.client)
+        self.loader = self.client.xilla_loader
 
     async def _start_async(self):
         self.logger.info("☀️ Запуск Xilla (Anti 1)...")
         await self.client.start()
-        self.logger.info("☀️ Успешная авторизация!")
+        
+        msg = self.client.xilla_i18n.t("startup_success", "☀️ Xilla A1 успешно запущена!")
+        self.logger.info(msg)
         
         # Load internal modules, plugins and packages
         await self.loader.load_all()
