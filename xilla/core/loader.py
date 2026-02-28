@@ -68,7 +68,9 @@ class ModuleLoader:
                 
                 # Async Task Queue Wrapper (Feature 3)
                 async def wrapper(event, method=method, instance=instance):
-                    if event.message.out:
+                    # Strict owner check: message must be outgoing OR from the owner's ID
+                    is_owner = event.message.out or (event.sender_id == (await event.client.get_me()).id)
+                    if is_owner:
                         text = event.raw_text
                         args = text.split(" ", 1)[1] if len(text.split()) > 1 else ""
                         event.args = args

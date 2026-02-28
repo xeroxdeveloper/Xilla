@@ -1,3 +1,4 @@
+from xilla.core.setup import setup_xilla
 import os
 import sys
 import logging
@@ -31,6 +32,10 @@ class XillaClient:
         
         msg = self.client.xilla_i18n.t("startup_success", "☀️ Xilla A1 успешно запущена!")
         self.logger.info(msg)
+        
+        # Run auto-setup
+        await setup_xilla(self.client)
+
         
         # Load internal modules, plugins and packages
         await self.loader.load_all()
