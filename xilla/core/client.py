@@ -28,8 +28,27 @@ class XillaClient:
 
     async def _start_async(self):
         self.logger.info("☀️ Запуск Xilla (Anti 1)...")
-        await self.client.start()
+        await self.client.connect()
         
+        # Safe Login Flow
+        if not await self.client.is_user_authorized():
+            phone = input("📱 Введите номер телефона (или токен бота): ")
+            try:
+                await self.client.send_code_request(phone)
+                code = input("💬 Введите код из Telegram: ")
+                try:
+                    await self.client.sign_in(phone, code)
+                except Exception as e:
+                    if "SessionPasswordNeeded" in str(type(e).__name__) or "password" in str(e).lower():
+                        import getpass
+                        password = getpass.getpass("🔒 Введите пароль двухфакторной аутентификации: ")
+                        await self.client.sign_in(password=password)
+                    else:
+                        raise e
+            except Exception as e:
+                self.logger.error(f"❌ Ошибка авторизации: {e}")
+                sys.exit(1)
+            
         msg = self.client.xilla_i18n.t("startup_success", "☀️ Xilla A1 успешно запущена!")
         self.logger.info(msg)
         
@@ -49,5 +68,9 @@ class XillaClient:
         loop = asyncio.get_event_loop()
         try:
             loop.run_until_complete(self._start_async())
+        except KeyboardInterrupt:
+            self.logger.info("[!] Остановка Xilla...")
+            loop.run_until_complete(self.client.disconnect())
         finally:
-            loop.close()
+            import os, signal
+            os.kill(os.getpid(), signal.SIGKILL)

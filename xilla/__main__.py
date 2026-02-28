@@ -15,5 +15,4 @@ if __name__ == "__main__":
     try:
         XillaClient().run()
     except KeyboardInterrupt:
-        print("\n[!] Остановка Xilla...")
-        sys.exit(0)
+        pass

@@ -5,7 +5,9 @@
         "core": {
             "logs_chat": 3804584194,
             "backups_chat": 3877112260,
-            "setup_done": true
+            "setup_done": true,
+            "inline_bot_token": "8784314960:AAEPbhhzS15TQYO_mZM7vlWkS1gQ1gUXpMI",
+            "inline_bot_username": "xilla_402b7o_bot"
         }
     }
 }
