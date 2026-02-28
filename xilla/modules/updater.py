@@ -19,7 +19,13 @@ class UpdaterMod(loader.Module):
     @loader.command()
     async def update(self, message: Message):
         """- Обновить юзербота"""
-        msg = await utils.answer(message, self.strings("updating"))
+        try:
+            from .banners import create_banner
+            banner = await create_banner("UPDATER", "Проверка обновлений Xilla", "#11998e", "#38ef7d")
+            msg = await utils.answer_file(message, banner, self.strings("updating"))
+        except Exception:
+            msg = await utils.answer(message, self.strings("updating"))
+            
         try:
             repo = git.Repo(search_parent_directories=True)
             origin = repo.remotes.origin

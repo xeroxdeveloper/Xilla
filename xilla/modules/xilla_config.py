@@ -917,7 +917,12 @@ class XillaConfigMod(loader.Module):
         
         # Add visual aesthetic to the loading state
         if not args:
-            msg = await utils.answer(message, "<b>☀️ Загрузка Xilla Config Hub...</b>")
+            try:
+                from .banners import create_banner
+                banner = await create_banner("CONFIG HUB", "Настройки модулей Xilla", "#8E2DE2", "#4A00E0")
+                msg = await utils.answer_file(message, banner, "<b>☀️ Загрузка Xilla Config Hub...</b>")
+            except Exception:
+                msg = await utils.answer(message, "<b>☀️ Загрузка Xilla Config Hub...</b>")
             await self.inline__choose_category(msg)
             return
 

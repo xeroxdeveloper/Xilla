@@ -139,24 +139,23 @@ class XillaInfoMod(loader.Module):
     @loader.command()
     async def infocmd(self, message: Message):
         try:
+            from .banners import create_banner
+            banner = await create_banner("XILLA INFO", f"Версия {'.'.join(map(str, __version__))}", "#0f2027", "#2c5364")
+            
             if self.config["custom_button"]:
                 await self.inline.form(
                     message=message,
                     text=self._render_info(True),
                     reply_markup=self._get_mark(),
-                    **(
-                        {"photo": self.config["banner_url"]}
-                        if self.config["banner_url"]
-                        else {}
-                    ),
+                    photo=banner
                 )
             else:
                 await utils.answer_file(
                     message,
-                    self.config["banner_url"],
+                    banner,
                     self._render_info(False),
                 )
-        except Exception:
+        except Exception as e:
             await utils.answer(message, self._render_info(False))
 
     @loader.command()
