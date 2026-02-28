@@ -112,7 +112,7 @@ class InlineManager(Utils, Events, TokenObtainment, Form, Gallery, QueryGallery,
                 logger.critical('Got Unauthorized')
                 await self._stop()
         self.bot.get_updates = new
-        self._task = asyncio.ensure_future(self._dp.start_polling(self.bot))
+        self._task = asyncio.ensure_future(self._dp.start_polling(self.bot, handle_signals=False))
         self._cleaner_task = asyncio.ensure_future(self._cleaner())
 
     async def _stop(self):
