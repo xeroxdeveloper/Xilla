@@ -1,6 +1,5 @@
 import io
 from PIL import Image, ImageDraw, ImageFont
-from xilla import loader
 
 async def create_banner(title: str, subtitle: str, color1: str = "#00d2ff", color2: str = "#3a7bd5") -> io.BytesIO:
     """Creates a beautiful gradient banner using Pillow"""
@@ -42,6 +41,7 @@ async def create_banner(title: str, subtitle: str, color1: str = "#00d2ff", colo
     out.seek(0)
     return out
 
+from .. import loader
 @loader.tds
 class PillowBannersMod(loader.Module):
     """Генерирует красивые градиентные баннеры для системных команд с помощью Pillow"""
