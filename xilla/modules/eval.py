@@ -20,24 +20,16 @@ class EvalMod(Module):
         redirected_output = sys.stdout = io.StringIO()
         
         try:
-            exec(f"async def _eval_func(message, client):
-" + "".join(f"    {l}
-" for l in code.split("
-")), globals(), locals())
+            exec(f"async def _eval_func(message, client):\n" + "".join(f"    {l}\n" for l in code.split("\n")), globals(), locals())
             await locals()["_eval_func"](message, message.client)
             res = redirected_output.getvalue()
             
             if not res:
                 res = "Успешно (без вывода)"
                 
-            await message.edit(f"<b>💻 Код:</b>
-<blockquote><code>{code}</code></blockquote>
-
-<b>ВЫВОД:</b>
-<blockquote expandable><code>{res}</code></blockquote>", parse_mode="HTML")
+            await message.edit(f"<b>💻 Код:</b>\n<blockquote><code>{code}</code></blockquote>\n\n<b>ВЫВОД:</b>\n<blockquote expandable><code>{res}</code></blockquote>", parse_mode="HTML")
         except Exception as e:
             err = traceback.format_exc()
-            await message.edit(f"<b>❌ Ошибка Eval:</b>
-<blockquote expandable><code>{err}</code></blockquote>", parse_mode="HTML")
+            await message.edit(f"<b>❌ Ошибка Eval:</b>\n<blockquote expandable><code>{err}</code></blockquote>", parse_mode="HTML")
         finally:
             sys.stdout = old_stdout

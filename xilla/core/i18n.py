@@ -18,3 +18,7 @@ class I18n:
 
     def t(self, key, default=None):
         return self.strings.get(key, default or key)
+
+class I18nMod:
+    # Just defining a module inside core to avoid circular imports
+    pass

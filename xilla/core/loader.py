@@ -82,9 +82,12 @@ class ModuleLoader:
                                 err = traceback.format_exc()
                                 self.logger.error(f"Command Error: {err}")
                                 try:
+                                    # Fallback to reply if edit fails
                                     await event.edit(f"<b>❌ Ошибка в {cmd_name}:</b>\n<code>{e}</code>", parse_mode="HTML")
                                 except:
-                                    pass
+                                    try:
+                                        await event.reply(f"<b>❌ Ошибка в {cmd_name}:</b>\n<code>{e}</code>", parse_mode="HTML")
+                                    except: pass
 
                         # Feature 3: Async Task Queue (Create task so it doesn't block)
                         asyncio.create_task(background_task())

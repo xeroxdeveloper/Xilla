@@ -143,6 +143,18 @@ async def setup_xilla(client):
             except Exception:
                 bot_user = bot_username
 
+            # Send /start to bot to trigger setup wizard BEFORE adding to groups
+            # This ensures Telegram registers the peer in our dialogs
+            if not config.get("core", "setup_done", False):
+                try:
+                    await client.send_message(bot_username, "/start")
+                    logger.info("🤖 Отправлена команда /start для запуска мастера настройки.")
+                except Exception as e:
+                    logger.warning(f"Не удалось отправить /start боту (возможно он еще не зарегистрировался на серверах): {e}")
+
+            import asyncio
+            await asyncio.sleep(2) # Wait for Telegram servers to propagate the new bot
+
             # Add to Logs
             if logs_id:
                 try:
