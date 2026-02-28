@@ -75,7 +75,7 @@ class ModuleLoader:
                         
                         async def background_task():
                             try:
-                                await method(instance, event)
+                                await method(event)
                             except Exception as e:
                                 err = traceback.format_exc()
                                 self.logger.error(f"Command Error: {err}")
