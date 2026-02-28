@@ -434,6 +434,11 @@ class Xilla:
         except Exception as e:
             logging.debug("Update check failed: %s", e)
 
+        import sys
+        sys.modules['hikka'] = sys.modules['xilla']
+        sys.modules['userbot'] = sys.modules['xilla']
+        sys.modules['heroku'] = sys.modules['xilla']
+        
         await modules.register_all(None)
         
         # AGGRESSIVE MEMORY OPTIMIZATION

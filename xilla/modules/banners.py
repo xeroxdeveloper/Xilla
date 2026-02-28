@@ -1,8 +1,16 @@
 import io
 from PIL import Image, ImageDraw, ImageFont
 
+_BANNER_CACHE = {}
+
 async def create_banner(title: str, subtitle: str, color1: str = "#00d2ff", color2: str = "#3a7bd5") -> io.BytesIO:
-    """Creates a beautiful gradient banner using Pillow"""
+    """Creates a beautiful gradient banner using Pillow (Optimized)"""
+    cache_key = f"{title}_{subtitle}_{color1}_{color2}"
+    if cache_key in _BANNER_CACHE:
+        out = io.BytesIO(_BANNER_CACHE[cache_key])
+        out.name = "banner.jpg"
+        return out
+        
     width, height = 800, 300
     image = Image.new("RGB", (width, height))
     draw = ImageDraw.Draw(image)
@@ -38,6 +46,9 @@ async def create_banner(title: str, subtitle: str, color1: str = "#00d2ff", colo
     out = io.BytesIO()
     out.name = "banner.jpg"
     image.save(out, "JPEG", quality=90)
+    
+    _BANNER_CACHE[cache_key] = out.getvalue()
+    
     out.seek(0)
     return out
 

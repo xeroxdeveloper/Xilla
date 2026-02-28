@@ -262,6 +262,13 @@ def patched_import(name: str, *args, **kwargs):
         return native_import('hikkatl' + name[8:], *args, **kwargs)
     if name.startswith('pyrogram'):
         return native_import('hikkapyro' + name[8:], *args, **kwargs)
+    if name.split('.')[0] in ('hikka', 'userbot', 'ftg', 'heroku'):
+        # Map hikka or legacy userbots to xilla
+        new_name = 'xilla' + name[len(name.split('.')[0]):]
+        try:
+            return native_import(new_name, *args, **kwargs)
+        except ImportError:
+            pass # Fallback to original
     return native_import(name, *args, **kwargs)
 builtins.__import__ = patched_import
 

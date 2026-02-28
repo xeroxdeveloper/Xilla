@@ -253,12 +253,24 @@ class Modules:
 
     async def register_all(self, mods: typing.Optional[typing.List[str]]=None, no_external: bool=False) -> typing.List[Module]:
         external_mods = []
+        plugin_mods = []
         if not mods:
+            # Core modules
             mods = [os.path.join(utils.get_base_dir(), MODULES_NAME, mod) for mod in filter(lambda x: x.endswith('.py') and (not x.startswith('_')), os.listdir(os.path.join(utils.get_base_dir(), MODULES_NAME)))]
+            
+            # Plugin system (new in Alpaca B8)
+            plugins_dir = os.path.join(utils.get_base_dir(), 'plugins')
+            if not os.path.exists(plugins_dir):
+                os.makedirs(plugins_dir, exist_ok=True)
+            plugin_mods = [os.path.join(plugins_dir, mod) for mod in filter(lambda x: x.endswith('.py') and (not x.startswith('_')), os.listdir(plugins_dir))]
+            
             self.secure_boot = self._db.get(__name__, 'secure_boot', False)
             external_mods = [] if self.secure_boot else [(LOADED_MODULES_PATH / mod).resolve() for mod in filter(lambda x: x.endswith(f'{self.client.tg_id}.py') and (not x.startswith('_')), os.listdir(LOADED_MODULES_DIR))]
+        
         loaded = []
         loaded += await self._register_modules(mods)
+        if plugin_mods:
+            loaded += await self._register_modules(plugin_mods, '<plugin>')
         if not no_external:
             loaded += await self._register_modules(external_mods, '<file>')
         return loaded

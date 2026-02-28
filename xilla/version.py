@@ -1,3 +1,3 @@
-__version__ = (2, 7, 5)
+__version__ = (2, 8, 0)
 branch = "main"
-codename = "Alpaca B7"
+codename = "Alpaca B8"
