@@ -24,7 +24,7 @@ class XillaInfoMod(loader.Module):
             ),
             loader.ConfigValue(
                 "banner_url",
-                "https://img.icons8.com/color/452/sun.png",
+                "https://image.pollinations.ai/prompt/beautiful_aesthetic_shining_sun_minimalist_vector_icon_orange_yellow_gradient?width=256&height=256&nologo=true",
                 lambda: self.strings("_cfg_banner"),
                 validator=loader.validators.Link(),
             ),
@@ -122,7 +122,7 @@ class XillaInfoMod(loader.Module):
             else None
         )
     @loader.inline_handler(
-        thumb_url="https://img.icons8.com/color/452/sun.png"
+        thumb_url="https://image.pollinations.ai/prompt/beautiful_aesthetic_shining_sun_minimalist_vector_icon_orange_yellow_gradient?width=256&height=256&nologo=true"
     )
     @loader.inline_everyone
     async def info(self, _: InlineQuery) -> dict:
@@ -136,7 +136,7 @@ class XillaInfoMod(loader.Module):
                 else {"message": self._render_info(True)}
             ),
             "thumb": (
-                "https://img.icons8.com/color/452/sun.png"
+                "https://image.pollinations.ai/prompt/beautiful_aesthetic_shining_sun_minimalist_vector_icon_orange_yellow_gradient?width=256&height=256&nologo=true"
             ),
             "reply_markup": self._get_mark(),
         }

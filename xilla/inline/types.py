@@ -9,11 +9,11 @@ logger = logging.getLogger(__name__)
 class InlineMessage:
 
     def __init__(self, inline_manager: 'InlineManager', unit_id: str, inline_message_id: str):
-        self.inline_message_id = inline_message_id
-        self.unit_id = unit_id
-        self.inline_manager = inline_manager
-        self._units = inline_manager._units
-        self.form = {'id': unit_id, **self._units[unit_id]} if unit_id in self._units else {}
+        self.__dict__['inline_message_id'] = inline_message_id
+        self.__dict__['unit_id'] = unit_id
+        self.__dict__['inline_manager'] = inline_manager
+        self.__dict__['_units'] = inline_manager._units
+        self.__dict__['form'] = {'id': unit_id, **self._units[unit_id]} if unit_id in self._units else {}
 
     async def edit(self, *args, **kwargs) -> 'InlineMessage':
         if 'unit_id' in kwargs:
@@ -31,12 +31,12 @@ class InlineMessage:
 class BotInlineMessage:
 
     def __init__(self, inline_manager: 'InlineManager', unit_id: str, chat_id: int, message_id: int):
-        self.chat_id = chat_id
-        self.unit_id = unit_id
-        self.inline_manager = inline_manager
-        self.message_id = message_id
-        self._units = inline_manager._units
-        self.form = {'id': unit_id, **self._units[unit_id]} if unit_id in self._units else {}
+        self.__dict__['chat_id'] = chat_id
+        self.__dict__['unit_id'] = unit_id
+        self.__dict__['inline_manager'] = inline_manager
+        self.__dict__['message_id'] = message_id
+        self.__dict__['_units'] = inline_manager._units
+        self.__dict__['form'] = {'id': unit_id, **self._units[unit_id]} if unit_id in self._units else {}
 
     async def edit(self, *args, **kwargs) -> 'BotMessage':
         if 'unit_id' in kwargs:

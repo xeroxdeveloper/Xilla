@@ -914,6 +914,13 @@ class XillaConfigMod(loader.Module):
     @loader.command(alias="cfg")
     async def configcmd(self, message: Message):
         args = utils.get_args_raw(message)
+        
+        # Add visual aesthetic to the loading state
+        if not args:
+            msg = await utils.answer(message, "<b>☀️ Загрузка Xilla Config Hub...</b>")
+            await self.inline__choose_category(msg)
+            return
+
         if self.lookup(args) and hasattr(self.lookup(args), "config"):
             form = await self.inline.form("☀️", message, silent=True)
             mod = self.lookup(args)
@@ -923,6 +930,7 @@ class XillaConfigMod(loader.Module):
                 type_ = mod.__origin__.startswith("<core")
             await self.inline__configure(form, args, obj_type=type_)
             return
+            
         await self.inline__choose_category(message)
     @loader.command(alias="fcfg")
     async def fconfig(self, message: Message):
