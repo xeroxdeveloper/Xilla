@@ -1,4 +1,0 @@
-import re
-
-def compat(code: str) -> str:
-    return '\n'.join([re.sub('^( *)from \\.\\.inline import (.+)$', '\\1from ..inline.types import \\2', re.sub('^( *)from \\.\\.inline import rand[^,]*$', '\x01from ..utils import rand', re.sub('^( *)from \\.\\.inline import rand, ?(.+)$', '\\1from ..inline.types import \\2\\n\\1from ..utils import rand', re.sub('^( *)from \\.\\.inline import (.+), ?rand[^,]*$', '\\1from ..inline.types import \\2\\n\\1from ..utils import rand', re.sub('^( *)from \\.\\.inline import (.+), ?rand, ?(.+)$', '\\1from ..inline.types import \\2, \\3\\n\\1from ..utils import rand', line.replace('GeekInlineQuery', 'InlineQuery').replace('self.inline._bot', 'self.inline.bot'), flags=re.M), flags=re.M), flags=re.M), flags=re.M), flags=re.M) for line in code.splitlines()])

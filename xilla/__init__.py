@@ -1,7 +1,4 @@
-__author__ = 'Dan Gazizullin'
-__contact__ = 'me@xeroxdeveloper.ru'
-__copyright__ = 'Copyright 2022, Dan Gazizullin'
-__credits__ = ['LonamiWebs', 'penn5']
-__license__ = 'AGPLv3'
-__maintainer__ = 'developer'
-__status__ = 'Production'
+from .core import Module, command
+
+__version__ = "A1"
+__all__ = ['Module', 'command']
