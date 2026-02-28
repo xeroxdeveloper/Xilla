@@ -158,11 +158,11 @@ class Form(InlineUnit):
         form = self._units[inline_query.query]
         try:
             if 'photo' in form:
-                await inline_query.answer([InlineQueryResultPhoto(id=utils.rand(20), title='Xilla', description='Xilla', caption=form.get('text'), parse_mode='HTML', photo_url=form['photo'], thumbnail_url='https://img.icons8.com/color/452/sun.png', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
+                await inline_query.answer([InlineQueryResultPhoto(id=utils.rand(20), title='Xilla', description='Xilla', caption=form.get('text'), parse_mode='HTML', photo_url=form['photo'], thumbnail_url='https://telegram.org/img/t_logo.png', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
             elif 'gif' in form:
-                await inline_query.answer([InlineQueryResultGif(id=utils.rand(20), title='Xilla', caption=form.get('text'), parse_mode='HTML', gif_url=form['gif'], thumbnail_url='https://img.icons8.com/color/452/sun.png', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
+                await inline_query.answer([InlineQueryResultGif(id=utils.rand(20), title='Xilla', caption=form.get('text'), parse_mode='HTML', gif_url=form['gif'], thumbnail_url='https://telegram.org/img/t_logo.png', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
             elif 'video' in form:
-                await inline_query.answer([InlineQueryResultVideo(id=utils.rand(20), title='Xilla', description='Xilla', caption=form.get('text'), parse_mode='HTML', video_url=form['video'], thumbnail_url='https://img.icons8.com/color/452/sun.png', mime_type='video/mp4', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
+                await inline_query.answer([InlineQueryResultVideo(id=utils.rand(20), title='Xilla', description='Xilla', caption=form.get('text'), parse_mode='HTML', video_url=form['video'], thumbnail_url='https://telegram.org/img/t_logo.png', mime_type='video/mp4', reply_markup=self.generate_markup(form['uid']))], cache_time=0)
             elif 'file' in form:
                 await inline_query.answer([InlineQueryResultDocument(id=utils.rand(20), title='Xilla', description='Xilla', caption=form.get('text'), parse_mode='HTML', document_url=form['file'], mime_type=form['mime_type'], reply_markup=self.generate_markup(form['uid']))], cache_time=0)
             elif 'location' in form:

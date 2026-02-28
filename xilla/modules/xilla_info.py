@@ -24,7 +24,7 @@ class XillaInfoMod(loader.Module):
             ),
             loader.ConfigValue(
                 "banner_url",
-                "https://image.pollinations.ai/prompt/beautiful_aesthetic_shining_sun_minimalist_vector_icon_orange_yellow_gradient?width=256&height=256&nologo=true",
+                "https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/icon256.png",
                 lambda: self.strings("_cfg_banner"),
                 validator=loader.validators.Link(),
             ),
@@ -121,9 +121,7 @@ class XillaInfoMod(loader.Module):
             if self.config["custom_button"]
             else None
         )
-    @loader.inline_handler(
-        thumb_url="https://image.pollinations.ai/prompt/beautiful_aesthetic_shining_sun_minimalist_vector_icon_orange_yellow_gradient?width=256&height=256&nologo=true"
-    )
+    @loader.inline_handler(thumb_url="https://telegram.org/img/t_logo.png")
     @loader.inline_everyone
     async def info(self, _: InlineQuery) -> dict:
         """Send userbot info"""
@@ -135,9 +133,7 @@ class XillaInfoMod(loader.Module):
                 if self.config["banner_url"]
                 else {"message": self._render_info(True)}
             ),
-            "thumb": (
-                "https://image.pollinations.ai/prompt/beautiful_aesthetic_shining_sun_minimalist_vector_icon_orange_yellow_gradient?width=256&height=256&nologo=true"
-            ),
+            "thumb": "https://telegram.org/img/t_logo.png",
             "reply_markup": self._get_mark(),
         }
     @loader.command()

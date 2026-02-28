@@ -85,11 +85,11 @@ class BotMessage(AiogramMessage):
 class InlineQuery(AiogramInlineQuery):
 
     def __init__(self, inline_query: AiogramInlineQuery):
-        super().__init__(self)
-        for attr in {'id', 'from_user', 'query', 'offset', 'chat_type', 'location'}:
-            setattr(self, attr, getattr(inline_query, attr, None))
-        self.inline_query = inline_query
-        self.args = self.inline_query.query.split(maxsplit=1)[1] if len(self.inline_query.query.split()) > 1 else ''
+        # Pass fields correctly via kwargs since Aiogram Pydantic models are frozen and strict
+        AiogramInlineQuery.__init__(self, **inline_query.model_dump())
+        self.__dict__['inline_query'] = inline_query
+        self.__dict__['args'] = self.inline_query.query.split(maxsplit=1)[1] if len(self.inline_query.query.split()) > 1 else ''
+
 
     @staticmethod
     def _get_res(title: str, description: str, thumb_url: str) -> list:
