@@ -107,8 +107,7 @@ async def setup_xilla(client):
             
         # Fallback manual input if auto-creation failed
         if not config.get("core", "inline_bot_token"):
-            print("
-[38;2;255;100;100m[!] Автоматическое создание бота не удалось (возможно флуд-лимит BotFather).[0m")
+            print("\n\033[38;2;255;100;100m[!] Автоматическое создание бота не удалось (возможно флуд-лимит BotFather).[0m")
             print("Пожалуйста, создайте бота вручную в @BotFather и введите его токен сюда:")
             try:
                 manual_token = input("Токен бота: ").strip()
@@ -151,6 +150,71 @@ async def setup_xilla(client):
                 
         except Exception as e:
             logger.error(f"Ошибка при добавлении бота в группы: {e}")
+
+    # 4. Telegram Folders setup
+    try:
+        from herokutl.tl.functions.messages import GetDialogFiltersRequest, UpdateDialogFilterRequest
+        from herokutl.tl.types import DialogFilter, InputPeerChat, InputPeerUser, InputPeerChannel
+        
+        # Get existing folders to not overwrite or duplicate
+        filters = await client(GetDialogFiltersRequest())
+        
+        xilla_folder_exists = False
+        archive_folder_exists = False
+        max_id = 1
+        
+        for f in filters:
+            if hasattr(f, 'id') and f.id > max_id:
+                max_id = f.id
+            if getattr(f, 'title', '') == "Xilla":
+                xilla_folder_exists = True
+                
+        # We need peer objects to add to folders
+        include_peers = []
+        bot_peer = await client.get_input_entity(bot_username) if bot_username else None
+        if bot_peer: include_peers.append(bot_peer)
+        
+        logs_peer = await client.get_input_entity(logs_id) if logs_id else None
+        if logs_peer: include_peers.append(logs_peer)
+        
+        if not xilla_folder_exists and include_peers:
+            logger.info("Создание папки Xilla в Telegram...")
+            await client(UpdateDialogFilterRequest(
+                id=max_id + 1,
+                filter=DialogFilter(
+                    id=max_id + 1,
+                    title="Xilla",
+                    pinned_peers=include_peers,
+                    include_peers=include_peers,
+                    exclude_peers=[],
+                    contacts=False,
+                    non_contacts=False,
+                    groups=False,
+                    broadcasts=False,
+                    bots=False,
+                    exclude_muted=False,
+                    exclude_read=False,
+                    exclude_archived=False
+                )
+            ))
+            
+        # Put Backups into Telegram Archive
+        if backups_id:
+            try:
+                from herokutl.tl.functions.folders import EditPeerFoldersRequest
+                from herokutl.tl.types import InputFolderPeer
+                logger.info("Отправка Xilla Backups в Архив...")
+                await client(EditPeerFoldersRequest(
+                    folder_peers=[InputFolderPeer(
+                        peer=await client.get_input_entity(backups_id),
+                        folder_id=1 # 1 is Telegram's builtin Archive folder
+                    )]
+                ))
+            except Exception as e:
+                logger.error(f"Не удалось архивировать Backups: {e}")
+
+    except Exception as e:
+        logger.error(f"Ошибка настройки папок: {e}")
 
     config.set("core", "setup_done", True)
     logger.info("☀️ Первоначальная настройка завершена!")

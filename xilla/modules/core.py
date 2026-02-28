@@ -56,16 +56,73 @@ class CoreMod(Module):
         modules = message.client.xilla_loader.modules
         reply += f"<b>📚 Всего модулей:</b> <code>{len(modules)}</code>\n\n"
         
+        # Split into system and user plugins based on filepath or specific flag
+        sys_mods = []
+        user_mods = []
+        
         for mod in modules:
             name = getattr(mod, "strings", {}).get("name", mod.__class__.__name__.replace("Mod", ""))
-            
             cmds = []
             for m_name in dir(mod):
                 method = getattr(mod, m_name)
                 if hasattr(method, "_xilla_command"):
                     cmds.append(f"<code>.{method._xilla_command}</code>")
                     
-            if cmds:
-                reply += f"<b>📦 {name}:</b>\n {' '.join(cmds)}\n\n"
+            if not cmds:
+                continue
                 
-        await message.edit(reply, parse_mode="HTML")
+            mod_text = f"<b>📦 {name}:</b>\n {' '.join(cmds)}\n"
+            
+            # Use module's underlying module name to determine if it's from core or plugins
+            if mod.__module__.startswith("xilla.dynamic"):
+                user_mods.append(mod_text)
+            else:
+                sys_mods.append(mod_text)
+                
+        # Feature: Different quoting/formatting for System vs User modules
+        if sys_mods:
+            reply += "<blockquote expandable><b>🛠 Системные:</b>\n\n" + "\n".join(sys_mods) + "</blockquote>\n"
+            
+        if user_mods:
+            reply += "<blockquote expandable><b>🧩 Установленные:</b>\n\n" + "\n".join(user_mods) + "</blockquote>\n"
+            
+        try:
+            from PIL import Image, ImageDraw, ImageFont
+            import io
+            
+            width, height = 800, 300
+            image = Image.new("RGB", (width, height))
+            draw = ImageDraw.Draw(image)
+            
+            # Xilla Cyan-Blue Gradient
+            for x in range(width):
+                r = int(0 + (34 - 0) * (x / width))
+                g = int(210 + (157 - 210) * (x / width))
+                b = int(255 + (229 - 255) * (x / width))
+                draw.line([(x, 0), (x, height)], fill=(r, g, b))
+                
+            try:
+                font_title = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 80)
+            except Exception:
+                font_title = ImageFont.load_default()
+
+            title = "XILLA HELP"
+            if hasattr(font_title, "getbbox"):
+                title_bbox = font_title.getbbox(title)
+                title_w = title_bbox[2] - title_bbox[0]
+            else:
+                title_w = len(title) * 45
+                
+            draw.text(((width - title_w) / 2, 100), title, fill="white", font=font_title)
+            
+            out = io.BytesIO()
+            out.name = "help.jpg"
+            image.save(out, "JPEG", quality=95)
+            out.seek(0)
+            
+            await message.client.send_file(message.peer_id, out, caption=reply, reply_to=message.reply_to_msg_id, parse_mode="HTML")
+            await message.delete()
+        except Exception:
+            await message.edit(reply, parse_mode="HTML")
+        except Exception:
+            await message.edit(reply, parse_mode="HTML")
