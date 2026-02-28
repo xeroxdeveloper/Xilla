@@ -1,5 +1,6 @@
 import re
 import asyncio
+import aiohttp
 from herokutl import events
 from herokutl.tl.types import Message
 from xilla.core import Module, command
@@ -14,45 +15,46 @@ class BotWizardMod(Module):
         self.bot_username = self.client.xilla_config.get("core", "inline_bot_username")
         if self.bot_username:
             self.client.add_event_handler(self._bot_message_handler, events.NewMessage(chats=self.bot_username, incoming=True))
+            # Listen to our outgoing messages to the bot to answer as the bot
+            self.client.add_event_handler(self._bot_pm_outgoing, events.NewMessage(chats=self.bot_username, outgoing=True))
 
     async def _bot_message_handler(self, event):
         # Setup wizard automation
         text = event.raw_text
         if not text:
             return
-            
-        # Example of how a wizard would work using buttons
-        # Since we are the userbot, we can click inline buttons sent by the bot!
-        
-        # But wait, our own userbot code doesn't have the Bot API server running yet to answer /start.
-        # So we should actually just implement the Bot API polling in a lightweight way,
-        # or handle it purely via Userbot.
-        
-        # Let's handle it purely via userbot: we intercept /start we send to the bot, 
-        # and we make the userbot edit our own /start message with the config!
         pass
 
-    @command("start")
-    async def start_wizard(self, message: Message):
-        """Запустить мастер настройки"""
-        # This is intercepted when user types /start in the bot PM
-        if message.to_id and getattr(message.to_id, "user_id", None) and getattr(message.to_id, "user_id") == message.sender_id:
-             # Wait, message.out is True. We are sending /start to someone.
-             pass
-             
-        # Actually a better approach is to just use a regular command for wizard
-        await message.edit(
-            "<b>☀️ Добро пожаловать в Xilla A2 Wizard!</b>\n\n"
-            "<i>Выберите язык интерфейса:</i>\n"
-            "🇷🇺 <code>.setlang ru</code>\n"
-            "🇬🇧 <code>.setlang en</code>\n\n"
-            "<i>Выберите частоту бэкапов:</i>\n"
-            "🕒 <code>.setbackup 1h</code> (Каждый час)\n"
-            "📅 <code>.setbackup 24h</code> (Каждый день)\n"
-            "❌ <code>.setbackup 0</code> (Отключить)", 
-            parse_mode="HTML"
-        )
-        
+    async def _bot_pm_outgoing(self, event):
+        text = event.raw_text
+        if text and text.strip().startswith("/start"):
+            bot_token = self.client.xilla_config.get("core", "inline_bot_token")
+            if not bot_token:
+                return
+            
+            wizard_text = (
+                "<b>☀️ Добро пожаловать в Xilla A2 Wizard!</b>\n\n"
+                "<i>Выберите язык интерфейса:</i>\n"
+                "🇷🇺 <code>.setlang ru</code>\n"
+                "🇬🇧 <code>.setlang en</code>\n\n"
+                "<i>Выберите частоту бэкапов:</i>\n"
+                "🕒 <code>.setbackup 1h</code> (Каждый час)\n"
+                "📅 <code>.setbackup 24h</code> (Каждый день)\n"
+                "❌ <code>.setbackup 0</code> (Отключить)"
+            )
+            
+            url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+            payload = {
+                "chat_id": event.sender_id,  # send it back to the userbot
+                "text": wizard_text,
+                "parse_mode": "HTML"
+            }
+            try:
+                async with aiohttp.ClientSession() as session:
+                    await session.post(url, json=payload)
+            except Exception as e:
+                pass
+
     @command("setlang")
     async def set_lang(self, message: Message):
         """<ru/en> - Установить язык"""

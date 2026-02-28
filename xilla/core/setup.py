@@ -127,29 +127,42 @@ async def setup_xilla(client):
         try:
             from herokutl.tl.functions.channels import InviteToChannelRequest
             
+            # 1. Сначала отправим /start, чтобы клиент "увидел" бота (кэшировал сущность)
+            if not config.get("core", "setup_done", False):
+                try:
+                    await asyncio.sleep(2)  # Дать Telegram время на регистрацию юзернейма
+                    await client.send_message(bot_username, "/start")
+                    logger.info("🤖 Отправлена команда /start для запуска мастера настройки.")
+                except Exception as e:
+                    logger.error(f"Не удалось отправить /start: {e}")
+                    
+            # 2. Теперь бот в кэше, добавляем его в группы
+            # Resolve entities for adding to channels
+            try:
+                bot_user = await client.get_input_entity(bot_username)
+            except Exception:
+                bot_user = bot_username
+
             # Add to Logs
             if logs_id:
                 try:
-                    await client(InviteToChannelRequest(logs_id, [bot_username]))
-                    logger.info(f"🤖 Бот добавлен в Xilla Logs")
-                except Exception:
-                    pass
+                    logs_channel = await client.get_input_entity(logs_id)
+                    await client(InviteToChannelRequest(logs_channel, [bot_user]))
+                    logger.info("🤖 Бот добавлен в Xilla Logs")
+                except Exception as e:
+                    logger.error(f"Не удалось добавить бота в Logs: {e}")
                     
             # Add to Backups
             if backups_id:
                 try:
-                    await client(InviteToChannelRequest(backups_id, [bot_username]))
-                    logger.info(f"🤖 Бот добавлен в Xilla Backups")
-                except Exception:
-                    pass
+                    backups_channel = await client.get_input_entity(backups_id)
+                    await client(InviteToChannelRequest(backups_channel, [bot_user]))
+                    logger.info("🤖 Бот добавлен в Xilla Backups")
+                except Exception as e:
+                    logger.error(f"Не удалось добавить бота в Backups: {e}")
                     
-            # Send /start to bot to trigger setup wizard if not done yet
-            if not config.get("core", "setup_done", False):
-                await client.send_message(bot_username, "/start")
-                logger.info("🤖 Отправлена команда /start для запуска мастера настройки.")
-                
         except Exception as e:
-            logger.error(f"Ошибка при добавлении бота в группы: {e}")
+            logger.error(f"Ошибка при настройке бота: {e}")
 
     # 4. Telegram Folders setup
     try:
@@ -157,13 +170,13 @@ async def setup_xilla(client):
         from herokutl.tl.types import DialogFilter, InputPeerChat, InputPeerUser, InputPeerChannel
         
         # Get existing folders to not overwrite or duplicate
-        filters = await client(GetDialogFiltersRequest())
+        filters_obj = await client(GetDialogFiltersRequest())
         
         xilla_folder_exists = False
         archive_folder_exists = False
         max_id = 1
         
-        for f in filters:
+        for f in filters_obj.filters:
             if hasattr(f, 'id') and f.id > max_id:
                 max_id = f.id
             if getattr(f, 'title', '') == "Xilla":
