@@ -201,7 +201,16 @@ class CommandDispatcher:
         message = await self._handle_command(event)
         if not message:
             return
+            
         message, _, _, func = message
+            
+        # Mandatory Update Check
+        if getattr(self.client, "update_required", False) and func.__name__ != "update":
+            from . import utils
+            await utils.answer(message, "<b>☀️ Доступно критическое обновление Xilla!</b>
+
+Пожалуйста, напишите <code>.update</code> чтобы обновить юзербота и продолжить работу.")
+            return
         asyncio.ensure_future(self.future_dispatcher(func, message, self.command_exc))
 
     async def command_exc(self, _, message: Message):

@@ -397,6 +397,17 @@ class Xilla:
             await self.web.add_loader(client, modules, db)
             await self.web.start_if_ready(len(self.clients), self.arguments.port, proxy_pass=self.arguments.proxy_pass)
         await self._add_dispatcher(client, modules, db)
+        import git
+        try:
+            repo = git.Repo(search_parent_directories=True)
+            repo.remotes.origin.fetch()
+            diff = repo.git.log([f"HEAD..origin/main", "--oneline"])
+            if diff:
+                client.update_required = True
+                print("\033[38;2;255;100;100m[!] Доступно обновление Xilla! Юзербот заблокирован до обновления. Обновите через 'git pull'.\033[0m")
+        except Exception as e:
+            logging.debug("Update check failed: %s", e)
+
         await modules.register_all(None)
         modules.send_config()
         await modules.send_ready()
